@@ -840,7 +840,7 @@ function loadSettings() {
   }
 }
 
-// Калькулятор - ПОЛНОСТЬЮ НОВАЯ РАБОЧАЯ ВЕРСИЯ
+// Калькулятор - ИСПРАВЛЕННАЯ РАБОЧАЯ ВЕРСИЯ
 class Calculator {
     constructor() {
         this.currentInput = '0';
