@@ -7,1364 +7,19 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    :root {
-      --primary-color: #4361ee;
-      --secondary-color: #3f37c9;
-      --accent-color: #4cc9f0;
-      --dark-color: #2b2d42;
-      --light-color: #f8f9fa;
-      --success-color: #4bb543;
-      --warning-color: #ff9500;
-      --danger-color: #ff3b30;
-      --gradient-start: #4361ee;
-      --gradient-end: #3a0ca3;
-      --sidebar-bg: #f8f9fa;
-      --sidebar-width: 280px;
-    }
-    
-    * {
-      box-sizing: border-box;
-    }
-    
-    body {
-      background: linear-gradient(135deg, #f0f2f5 0%, #e2e8f0 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--dark-color);
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      animation: fadeIn 0.8s ease-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    /* Стили для бокового меню */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: var(--sidebar-width);
-      background: var(--sidebar-bg);
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-      padding: 20px;
-    }
-    
-    .sidebar.open {
-      transform: translateX(0);
-    }
-    
-    .sidebar-toggle {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1001;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-    }
-    
-    .sidebar-toggle:hover {
-      background: var(--secondary-color);
-      transform: scale(1.1);
-    }
-    
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 25px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eaeaea;
-    }
-    
-    .sidebar-title {
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: var(--dark-color);
-      margin: 0;
-    }
-    
-    .sidebar-close {
-      background: none;
-      border: none;
-      color: #6c757d;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.3s ease;
-    }
-    
-    .sidebar-close:hover {
-      color: var(--danger-color);
-      transform: rotate(90deg);
-    }
-    
-    .theme-section {
-      margin-bottom: 25px;
-    }
-    
-    .section-title {
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: var(--dark-color);
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .section-title i {
-      margin-right: 10px;
-      color: var(--primary-color);
-    }
-    
-    .theme-options {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    
-    .theme-option {
-      border-radius: 12px;
-      padding: 15px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 2px solid #eaeaea;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .theme-option::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 8px;
-    }
-    
-    .theme-option:hover {
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .theme-option.active {
-      border-color: var(--primary-color);
-      box-shadow: 0 6px 18px rgba(67, 97, 238, 0.3);
-    }
-    
-    .theme-option.active::after {
-      content: '✓';
-      position: absolute;
-      top: 5px;
-      right: 8px;
-      background: var(--primary-color);
-      color: white;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    
-    .theme-preview {
-      width: 100%;
-      height: 60px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-    }
-    
-    .theme-name {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--dark-color);
-    }
-    
-    /* Темы оформления */
-    .theme-default .theme-preview {
-      background: linear-gradient(135deg, #4361ee, #3a0ca3);
-    }
-    
-    .theme-dark .theme-preview {
-      background: linear-gradient(135deg, #2b2d42, #1a1a2e);
-    }
-    
-    .theme-nature .theme-preview {
-      background: linear-gradient(135deg, #2e8b57, #3cb371);
-    }
-    
-    .theme-ocean .theme-preview {
-      background: linear-gradient(135deg, #0077b6, #00b4d8);
-    }
-    
-    .theme-sunset .theme-preview {
-      background: linear-gradient(135deg, #ff6b6b, #ffa500);
-    }
-    
-    .theme-purple .theme-preview {
-      background: linear-gradient(135deg, #7209b7, #560bad);
-    }
-    
-    /* Применение тем к основному интерфейсу */
-    body.theme-dark {
-      --primary-color: #4cc9f0;
-      --secondary-color: #4895ef;
-      --accent-color: #4361ee;
-      --dark-color: #f8f9fa;
-      --light-color: #2b2d42;
-      --gradient-start: #4cc9f0;
-      --gradient-end: #3a0ca3;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: #f8f9fa;
-    }
-    
-    body.theme-dark .whiteboard-container,
-    body.theme-dark .controls,
-    body.theme-dark .status-bar,
-    body.theme-dark .zoom-panel,
-    body.theme-dark .modal-content {
-      background: #2b2d42;
-      color: #f8f9fa;
-    }
-    
-    body.theme-dark .canvas-tab {
-      background: #1a1a2e;
-      color: #f8f9fa;
-      border-color: #444;
-    }
-    
-    body.theme-dark .canvas-tab.active {
-      background: #2b2d42;
-      border-color: var(--primary-color);
-    }
-    
-    body.theme-dark .form-control {
-      background: #1a1a2e;
-      border-color: #444;
-      color: #f8f9fa;
-    }
-    
-    body.theme-dark .btn-tool {
-      background: #1a1a2e;
-      color: #f8f9fa;
-    }
-    
-    body.theme-nature {
-      --primary-color: #2e8b57;
-      --secondary-color: #3cb371;
-      --accent-color: #90ee90;
-      --dark-color: #2f4f4f;
-      --light-color: #f0fff0;
-      --gradient-start: #2e8b57;
-      --gradient-end: #3cb371;
-      background: linear-gradient(135deg, #f0fff0 0%, #e0f7e9 100%);
-    }
-    
-    body.theme-ocean {
-      --primary-color: #0077b6;
-      --secondary-color: #00b4d8;
-      --accent-color: #90e0ef;
-      --dark-color: #03045e;
-      --light-color: #caf0f8;
-      --gradient-start: #0077b6;
-      --gradient-end: #00b4d8;
-      background: linear-gradient(135deg, #caf0f8 0%, #ade8f4 100%);
-    }
-    
-    body.theme-sunset {
-      --primary-color: #ff6b6b;
-      --secondary-color: #ffa500;
-      --accent-color: #ffd166;
-      --dark-color: #8b4513;
-      --light-color: #fff5e6;
-      --gradient-start: #ff6b6b;
-      --gradient-end: #ffa500;
-      background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
-    }
-    
-    body.theme-purple {
-      --primary-color: #7209b7;
-      --secondary-color: #560bad;
-      --accent-color: #b5179e;
-      --dark-color: #3a0ca3;
-      --light-color: #f8f0ff;
-      --gradient-start: #7209b7;
-      --gradient-end: #560bad;
-      background: linear-gradient(135deg, #f8f0ff 0%, #e8d6ff 100%);
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 20px auto;
-      padding: 0 15px;
-      animation: slideInFromTop 0.8s ease-out;
-      transition: all 0.3s ease;
-    }
-    
-    @keyframes slideInFromTop {
-      from { transform: translateY(-30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    h1 {
-      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 25px;
-      font-weight: 700;
-      text-align: center;
-      animation: titleGlow 3s ease-in-out infinite alternate;
-    }
-    
-    @keyframes titleGlow {
-      from { filter: drop-shadow(0 0 2px rgba(67, 97, 238, 0.5)); }
-      to { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.8)); }
-    }
-    
-    .canvas-tabs {
-      display: flex;
-      background: white;
-      border-radius: 12px 12px 0 0;
-      padding: 10px 10px 0 10px;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-      overflow-x: auto;
-      margin-bottom: -1px;
-      position: relative;
-      z-index: 10;
-      animation: slideInFromLeft 0.6s ease-out;
-    }
-    
-    @keyframes slideInFromLeft {
-      from { transform: translateX(-20px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    .canvas-tab {
-      display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      background: #f8f9fa;
-      border: 2px solid #dee2e6;
-      border-bottom: none;
-      border-radius: 10px 10px 0 0;
-      margin-right: 5px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      min-width: 120px;
-      max-width: 200px;
-      position: relative;
-      animation: popIn 0.5s ease-out;
-    }
-    
-    @keyframes popIn {
-      0% { transform: scale(0.8) translateY(10px); opacity: 0; }
-      70% { transform: scale(1.05) translateY(-2px); }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-    
-    .canvas-tab:hover {
-      background: #e9ecef;
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .canvas-tab.active {
-      background: white;
-      border-color: var(--primary-color);
-      box-shadow: 0 -2px 8px rgba(67, 97, 238, 0.2);
-      transform: translateY(-2px);
-    }
-    
-    .canvas-tab-name {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 600;
-      margin-right: 8px;
-      color: var(--dark-color);
-    }
-    
-    .tab-close {
-      background: none;
-      border: none;
-      color: #6c757d;
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-    }
-    
-    .tab-close:hover {
-      background: #dc3545;
-      color: white;
-      transform: rotate(90deg) scale(1.2);
-    }
-    
-    .add-tab-btn {
-      padding: 10px 15px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 10px 10px 0 0;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-left: 5px;
-      font-weight: 600;
-      animation: bounceIn 1s ease-out;
-    }
-    
-    @keyframes bounceIn {
-      0% { transform: scale(0.3); opacity: 0; }
-      50% { transform: scale(1.05); }
-      70% { transform: scale(0.9); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .add-tab-btn:hover {
-      background: var(--secondary-color);
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-    }
-    
-    .whiteboard-container {
-      background: white;
-      border-radius: 0 12px 12px 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s ease;
-      animation: slideInFromBottom 0.7s ease-out;
-    }
-    
-    @keyframes slideInFromBottom {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    .canvas-wrapper {
-      overflow: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-      background-color: white;
-      max-width: 100%;
-      position: relative;
-      transition: all 0.3s ease;
-      border: 2px solid #e9ecef;
-    }
-    
-    #whiteboard {
-      cursor: crosshair;
-      display: block;
-      transition: all 0.3s ease;
-      background: white;
-    }
-    
-    .controls {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      transition: all 0.4s ease;
-      animation: slideInFromRight 0.8s ease-out;
-    }
-    
-    @keyframes slideInFromRight {
-      from { transform: translateX(30px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    .controls:hover {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-    
-    .control-section {
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eaeaea;
-      animation: fadeInUp 0.5s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-      from { transform: translateY(10px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    .control-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    
-    .control-title {
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--dark-color);
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .control-title i {
-      margin-right: 10px;
-      color: var(--primary-color);
-    }
-    
-    .btn-tool {
-      border-radius: 10px;
-      padding: 10px 15px;
-      margin: 0 5px 10px 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      font-weight: 500;
-    }
-    
-    .btn-tool::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
-    
-    .btn-tool:hover::before {
-      left: 100%;
-    }
-    
-    .btn-tool i {
-      margin-right: 8px;
-    }
-    
-    .btn-tool:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-    
-    .btn-tool:active {
-      transform: translateY(-1px) scale(1.02);
-    }
-    
-    .color-palette {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-    
-    .color-option {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 3px solid transparent;
-      position: relative;
-      animation: colorPop 0.5s ease-out;
-    }
-    
-    @keyframes colorPop {
-      0% { transform: scale(0); }
-      80% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    
-    .color-option:hover {
-      transform: scale(1.2) rotate(5deg);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-    }
-    
-    .color-option.active {
-      border-color: var(--dark-color);
-      transform: scale(1.15);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-      animation: activeColorPulse 2s infinite;
-    }
-    
-    @keyframes activeColorPulse {
-      0%, 100% { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
-      50% { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45); }
-    }
-    
-    .brush-controls {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .brush-preview {
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
-      background-color: var(--dark-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
-    .form-control {
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      padding: 10px 15px;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 0.2rem rgba(76, 201, 240, 0.25);
-      transform: scale(1.02);
-    }
-    
-    .zoom-panel {
-      position: fixed;
-      right: 30px;
-      bottom: 30px;
-      background: white;
-      border-radius: 16px;
-      padding: 15px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      animation: slideInFromRight 0.6s ease-out;
-      transition: all 0.3s ease;
-    }
-    
-    .zoom-panel:hover {
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-      transform: translateY(-3px);
-    }
-    
-    .zoom-panel-title {
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--dark-color);
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .zoom-panel-title i {
-      color: var(--primary-color);
-    }
-    
-    .zoom-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    
-    .zoom-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      border: 2px solid var(--primary-color);
-      background: white;
-      color: var(--primary-color);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: bold;
-    }
-    
-    .zoom-btn:hover {
-      background: var(--primary-color);
-      color: white;
-      transform: scale(1.1) rotate(5deg);
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-    }
-    
-    .zoom-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .zoom-display {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--primary-color);
-      min-width: 60px;
-      text-align: center;
-      background: #f8f9fa;
-      padding: 8px 12px;
-      border-radius: 8px;
-    }
-    
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: white;
-      border-radius: 10px;
-      padding: 12px 18px;
-      margin-top: 15px;
-      font-size: 0.9rem;
-      color: #6c757d;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-      animation: slideInFromBottom 0.5s ease-out;
-    }
-    
-    .status-bar:hover {
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-    }
-    
-    .tool-active {
-      background-color: var(--primary-color) !important;
-      color: white !important;
-      animation: toolActive 0.5s ease-out;
-    }
-    
-    @keyframes toolActive {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    
-    .drawing-mode-active {
-      background-color: var(--success-color) !important;
-      color: white !important;
-      animation: drawingPulse 2s infinite;
-    }
-    
-    @keyframes drawingPulse {
-      0% { box-shadow: 0 0 0 0 rgba(75, 181, 67, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(75, 181, 67, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(75, 181, 67, 0); }
-    }
-    
-    .drawing-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    
-    .drawing-tool {
-      width: 55px;
-      height: 55px;
-      border-radius: 12px;
-      background: white;
-      border: 2px solid #eaeaea;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      font-size: 1.3rem;
-      color: var(--dark-color);
-      animation: drawingToolAppear 0.5s ease-out;
-    }
-    
-    @keyframes drawingToolAppear {
-      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-    
-    .drawing-tool:hover {
-      transform: translateY(-5px) scale(1.1);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      border-color: var(--primary-color);
-    }
-    
-    .drawing-tool.active {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-      transform: scale(1.05);
-      box-shadow: 0 6px 18px rgba(67, 97, 238, 0.4);
-    }
-    
-    .modal-content {
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-      animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      border: none;
-    }
-    
-    @keyframes modalAppear {
-      from { transform: scale(0.9) translateY(-20px); opacity: 0; }
-      to { transform: scale(1) translateY(0); opacity: 1; }
-    }
-    
-    .modal-header {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-      border-bottom: none;
-      padding: 20px 25px;
-    }
-    
-    .modal-title {
-      font-weight: 600;
-      font-size: 1.3rem;
-    }
-    
-    .modal-body {
-      padding: 25px;
-    }
-    
-    .canvas-size-controls {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    
-    .size-btn {
-      padding: 20px 15px;
-      border-radius: 12px;
-      border: 2px solid #ddd;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      animation: sizeBtnAppear 0.5s ease-out;
-    }
-    
-    @keyframes sizeBtnAppear {
-      0% { transform: scale(0) rotate(10deg); opacity: 0; }
-      80% { transform: scale(1.05) rotate(-2deg); }
-      100% { transform: scale(1) rotate(0); opacity: 1; }
-    }
-    
-    .size-btn:hover {
-      background: #f8f9fa;
-      border-color: var(--primary-color);
-      transform: translateY(-5px) scale(1.03);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .size-btn.active {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-      transform: scale(1.05);
-      box-shadow: 0 8px 24px rgba(67, 97, 238, 0.4);
-    }
-    
-    .size-icon {
-      font-size: 2rem;
-    }
-    
-    .size-label {
-      font-weight: 700;
-      font-size: 1rem;
-    }
-    
-    .size-dimensions {
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
-    
-    .grid-controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-    
-    .grid-btn {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 500;
-    }
-    
-    .grid-btn:hover {
-      background: #f8f9fa;
-      border-color: var(--primary-color);
-      transform: translateY(-2px);
-    }
-    
-    .grid-btn.active {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-    }
-    
-    .tools-section {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    
-    .tool-btn-card {
-      border-radius: 12px;
-      padding: 18px 12px;
-      background: white;
-      border: 2px solid #eaeaea;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      animation: toolCardAppear 0.6s ease-out;
-    }
-    
-    @keyframes toolCardAppear {
-      0% { transform: translateY(30px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-    
-    .tool-btn-card i {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-      color: var(--primary-color);
-      transition: all 0.3s ease;
-    }
-    
-    .tool-btn-card:hover {
-      transform: translateY(-8px) scale(1.05);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-      border-color: var(--primary-color);
-    }
-    
-    .tool-btn-card:hover i {
-      transform: scale(1.3) rotate(10deg);
-    }
-    
-    .tool-btn-card span {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--dark-color);
-    }
-    
-    .shape-fill-controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    
-    .fill-btn {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-weight: 500;
-    }
-    
-    .fill-btn:hover {
-      background: #f8f9fa;
-      border-color: var(--primary-color);
-      transform: translateY(-2px);
-    }
-    
-    .fill-btn.active {
-      background: var(--primary-color);
-      color: white;
-      border-color: var(--primary-color);
-    }
-    
-    .layer-controls {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    
-    .layer-btn {
-      padding: 12px;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-weight: 500;
-    }
-    
-    .layer-btn:hover {
-      background: #f8f9fa;
-      border-color: var(--primary-color);
-      transform: translateY(-2px);
-    }
-    
-    /* УЛУЧШЕННЫЙ КАЛЬКУЛЯТОР */
-    .calculator {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 320px;
-      margin: 0 auto;
-      animation: calculatorSlideIn 0.6s ease-out;
-    }
-    
-    @keyframes calculatorSlideIn {
-      from { transform: translateY(30px) scale(0.9); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    
-    .calculator-display-container {
-      grid-column: span 4;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border-radius: 16px;
-      padding: 20px;
-      border: 2px solid #0f3460;
-      margin-bottom: 20px;
-      min-height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3),
-                  0 8px 25px rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .calculator-display-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-      animation: displayGlow 2s ease-in-out infinite;
-    }
-    
-    @keyframes displayGlow {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-    
-    .calculator-display {
-      font-size: 2.5rem;
-      font-weight: 700;
-      text-align: right;
-      color: white;
-      transition: all 0.2s ease;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      font-family: 'Courier New', monospace;
-      letter-spacing: 1px;
-    }
-    
-    .calculator-operation {
-      font-size: 1.1rem;
-      color: var(--accent-color);
-      text-align: right;
-      min-height: 24px;
-      margin-bottom: 8px;
-      font-family: 'Courier New', monospace;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      opacity: 0.9;
-    }
-    
-    .calculator-btn {
-      height: 60px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(145deg, #f0f2f5, #e2e8f0);
-      font-weight: 700;
-      font-size: 1.3rem;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      animation: btnAppear 0.5s ease-out;
-    }
-    
-    @keyframes btnAppear {
-      0% { transform: scale(0) rotate(-10deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0); opacity: 1; }
-    }
-    
-    .calculator-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-      transition: left 0.5s;
-    }
-    
-    .calculator-btn:hover::before {
-      left: 100%;
-    }
-    
-    .calculator-btn:hover {
-      background: linear-gradient(145deg, #e2e8f0, #f0f2f5);
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-    
-    .calculator-btn:active {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .calculator-btn.operator {
-      background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-    
-    .calculator-btn.operator:hover {
-      background: linear-gradient(145deg, var(--secondary-color), var(--primary-color));
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-    
-    .calculator-btn.equals {
-      background: linear-gradient(145deg, var(--success-color), #3da336);
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(75, 181, 67, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      animation: equalsPulse 2s ease-in-out infinite;
-    }
-    
-    @keyframes equalsPulse {
-      0%, 100% { box-shadow: 0 4px 12px rgba(75, 181, 67, 0.3); }
-      50% { box-shadow: 0 4px 20px rgba(75, 181, 67, 0.6); }
-    }
-    
-    .calculator-btn.equals:hover {
-      background: linear-gradient(145deg, #3da336, var(--success-color));
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 20px rgba(75, 181, 67, 0.5),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-    
-    .calculator-btn.clear {
-      background: linear-gradient(145deg, var(--warning-color), #e68a00);
-      color: white;
-      font-weight: 700;
-    }
-    
-    .calculator-btn.clear:hover {
-      background: linear-gradient(145deg, #e68a00, var(--warning-color));
-    }
-    
-    .calculator-btn.delete {
-      background: linear-gradient(145deg, var(--danger-color), #e62e2e);
-      color: white;
-      font-weight: 700;
-    }
-    
-    .calculator-btn.delete:hover {
-      background: linear-gradient(145deg, #e62e2e, var(--danger-color));
-    }
-    
-    .text-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-    
-    .text-control {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .text-control label {
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--dark-color);
-    }
-    
-    @media (max-width: 768px) {
-      .controls {
-        padding: 15px;
-      }
-      
-      .btn-tool {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-      }
-      
-      .color-option {
-        width: 38px;
-        height: 38px;
-      }
-      
-      .canvas-tab {
-        min-width: 100px;
-        max-width: 150px;
-        padding: 8px 12px;
-      }
-      
-      .tools-section {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .zoom-panel {
-        right: 15px;
-        bottom: 15px;
-        padding: 12px;
-      }
-      
-      .canvas-size-controls {
-        grid-template-columns: 1fr;
-      }
-      
-      .calculator {
-        max-width: 280px;
-        gap: 8px;
-      }
-      
-      .calculator-btn {
-        height: 50px;
-        font-size: 1.1rem;
-      }
-      
-      .calculator-display {
-        font-size: 2rem;
-      }
-      
-      .sidebar {
-        width: 100%;
-      }
-      
-      .theme-options {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    footer {
-      margin-top: 30px;
-      text-align: center;
-      color: #6c757d;
-      font-size: 0.9rem;
-      padding: 20px;
-      animation: fadeIn 1.5s ease-out;
-    }
-    
-    footer a {
-      color: var(--primary-color);
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    
-    footer a:hover {
-      color: var(--secondary-color);
-      text-decoration: underline;
-    }
-    
-    .toast-notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: white;
-      padding: 15px 20px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-      z-index: 10000;
-      animation: slideInFromRight 0.5s ease-out, slideOutToRight 0.5s ease-out 2.5s forwards;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    @keyframes slideOutToRight {
-      to { transform: translateX(400px); opacity: 0; }
-    }
-    
-    .toast-notification i {
-      font-size: 1.5rem;
-    }
-    
-    .toast-success { border-left: 4px solid var(--success-color); }
-    .toast-success i { color: var(--success-color); }
-    
-    .toast-info { border-left: 4px solid var(--primary-color); }
-    .toast-info i { color: var(--primary-color); }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <!-- Кнопка открытия бокового меню -->
   <button class="sidebar-toggle" id="sidebarToggle">
     <i class="fas fa-palette"></i>
   </button>
-  
+
+  <!-- Скрытая кнопка-посхалка -->
+  <button id="easterEggButton">
+    <i class="fas fa-eye"></i>
+  </button>
+
   <!-- Боковое меню для выбора тем -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -1373,7 +28,6 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
     <div class="theme-section">
       <div class="section-title">
         <i class="fas fa-fill-drip"></i> Цветовые Темы
@@ -1415,28 +69,62 @@
           </div>
           <div class="theme-name">Фиолетовая</div>
         </div>
+        <div class="theme-option theme-cosmos" data-theme="cosmos">
+          <div class="theme-preview">
+            <i class="fas fa-globe-asia"></i>
+          </div>
+          <div class="theme-name">Космос</div>
+        </div>
       </div>
     </div>
-    
     <div class="theme-section">
       <div class="section-title">
         <i class="fas fa-cog"></i> Настройки Интерфейса
       </div>
       <div class="form-group">
         <label for="sidebarWidth">Ширина боковой панели</label>
-        <input type="range" class="form-control-range" id="sidebarWidth" min="200" max="400" value="280" oninput="changeSidebarWidth(this.value)">
+        <input type="range" class="form-control-range" id="sidebarWidth" min="200" max="400" value="280">
       </div>
       <div class="form-group">
         <label for="animationSpeed">Скорость анимации</label>
-        <select class="form-control" id="animationSpeed" onchange="changeAnimationSpeed(this.value)">
+        <select class="form-control" id="animationSpeed">
           <option value="slow">Медленно</option>
           <option value="normal" selected>Нормально</option>
           <option value="fast">Быстро</option>
           <option value="none">Без анимации</option>
         </select>
       </div>
+      <div class="form-group">
+        <label for="cursorStyle">Стиль курсора</label>
+        <select class="form-control" id="cursorStyle">
+          <option value="default">По умолчанию</option>
+          <option value="crosshair">Крест (точность)</option>
+          <option value="pointer">Указатель</option>
+          <option value="cell">Сетка</option>
+          <option value="help">Помощь</option>
+          <option value="wait">Ожидание</option>
+          <option value="progress">Прогресс</option>
+          <option value="none">Нет</option>
+          <option value="custom">Свой (URL)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="cursorUrl">URL для курсора (если выбрано "Свой")</label>
+        <input type="text" class="form-control" id="cursorUrl" placeholder="Введите URL изображения для курсора">
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="smoothScroll">
+        <label class="form-check-label" for="smoothScroll">Плавная прокрутка</label>
+      </div>
+      <div class="form-group">
+        <label for="canvasBgOpacity">Прозрачность фона холста</label>
+        <input type="range" class="form-control-range" id="canvasBgOpacity" min="0" max="1" step="0.05" value="1">
+      </div>
+      <div class="form-group">
+        <label for="canvasBgColor">Цвет фона холста</label>
+        <input type="text" id="canvasBgColor" />
+      </div>
     </div>
-    
     <div class="theme-section">
       <div class="section-title">
         <i class="fas fa-info-circle"></i> Информация
@@ -1449,25 +137,38 @@
       </div>
     </div>
   </div>
-  
-  <!-- Остальная часть HTML остается без изменений -->
+
+  <!-- НОВАЯ ПАНЕЛЬ С ФИШКАМИ -->
+  <div class="toolbar">
+    <div class="toolbar-item" id="nightModeToggle">
+      <span class="night-mode-toggle"></span>
+      Ночной Режим
+    </div>
+    <div class="toolbar-item" id="rainbowBrushToggle">
+      <span class="rainbow-brush"></span>
+      Радужная Кисть
+    </div>
+    <div class="toolbar-item" id="soundEffectToggle">
+      <span class="sound-effect"></span>
+      Звуковые Эффекты
+    </div>
+  </div>
+
   <div class="container">
     <h1><i class="fas fa-draw-polygon"></i> Интерактивная Доска</h1>
-    
     <!-- Canvas Tabs -->
     <div class="canvas-tabs" id="canvasTabs"></div>
-    
     <!-- Tools Section -->
     <div class="tools-section">
       <div class="tool-btn-card" data-toggle="modal" data-target="#calculatorModal">
         <i class="fas fa-calculator"></i>
         <span>Калькулятор</span>
       </div>
-      <div class="tool-btn-card" onclick="saveCanvas()">
+      <div class="tool-btn-card" id="saveCanvasBtn">
         <i class="fas fa-save"></i>
         <span>Сохранить</span>
       </div>
-      <div class="tool-btn-card" onclick="loadCanvas()">
+      <div class="tool-btn-card" id="loadCanvasBtn">
         <i class="fas fa-folder-open"></i>
         <span>Загрузить</span>
       </div>
@@ -1480,122 +181,115 @@
         <span>Размер</span>
       </div>
     </div>
-    
     <div class="whiteboard-container">
       <div class="canvas-wrapper" id="canvasWrapper">
         <canvas id="whiteboard"></canvas>
       </div>
     </div>
-    
     <div class="controls">
       <div class="control-section">
         <div class="control-title"><i class="fas fa-tools"></i> Инструменты Рисования</div>
         <div class="drawing-tools">
-          <div class="drawing-tool active" onclick="setDrawingMode('pencil')" title="Карандаш">
+          <div class="drawing-tool active" data-mode="pencil" title="Карандаш">
             <i class="fas fa-pencil-alt"></i>
           </div>
-          <div class="drawing-tool" onclick="setDrawingMode('line')" title="Линия">
+          <div class="drawing-tool" data-mode="line" title="Линия">
             <i class="fas fa-minus"></i>
           </div>
-          <div class="drawing-tool" onclick="setDrawingMode('rectangle')" title="Прямоугольник">
+          <div class="drawing-tool" data-mode="rectangle" title="Прямоугольник">
             <i class="fas fa-square"></i>
           </div>
-          <div class="drawing-tool" onclick="setDrawingMode('circle')" title="Круг">
+          <div class="drawing-tool" data-mode="circle" title="Круг">
             <i class="fas fa-circle"></i>
           </div>
-          <div class="drawing-tool" onclick="setDrawingMode('text')" title="Текст">
+          <div class="drawing-tool" data-mode="text" title="Текст">
             <i class="fas fa-font"></i>
           </div>
-          <div class="drawing-tool" onclick="setDrawingMode('select')" title="Выбор/Перемещение">
+          <div class="drawing-tool" data-mode="select" title="Выбор/Перемещение">
             <i class="fas fa-mouse-pointer"></i>
           </div>
         </div>
         <div>
-          <button class="btn btn-success btn-tool toggle" id="toggle-drawing" onclick="toggleCanvas()">
+          <button class="btn btn-success btn-tool toggle" id="toggle-drawing">
             <i class="fas fa-pencil-alt"></i> Рисование Включено
           </button>
-          <button class="btn btn-danger btn-tool" onclick="clearCanvas()">
+          <button class="btn btn-danger btn-tool" id="clearCanvasBtn">
             <i class="fas fa-eraser"></i> Очистить
           </button>
-          <button class="btn btn-info btn-tool" id="undo-btn" onclick="undo()">
+          <button class="btn btn-info btn-tool" id="undo-btn">
             <i class="fas fa-undo"></i> Отменить
           </button>
-          <button class="btn btn-info btn-tool" id="redo-btn" onclick="redo()">
+          <button class="btn btn-info btn-tool" id="redo-btn">
             <i class="fas fa-redo"></i> Вернуть
           </button>
         </div>
       </div>
-      
       <div class="control-section">
         <div class="control-title"><i class="fas fa-th"></i> Настройки Сетки</div>
         <div class="grid-controls">
-          <button class="grid-btn" onclick="toggleGrid()" id="toggle-grid">
+          <button class="grid-btn" id="toggle-grid">
             <i class="fas fa-border-all"></i> Вкл/Выкл Сетку
           </button>
-          <button class="grid-btn" onclick="changeGridSize(10)" id="grid-10">
+          <button class="grid-btn" data-size="10">
             <i class="fas fa-th"></i> 10px
           </button>
-          <button class="grid-btn active" onclick="changeGridSize(20)" id="grid-20">
+          <button class="grid-btn active" data-size="20">
             <i class="fas fa-th-large"></i> 20px
           </button>
-          <button class="grid-btn" onclick="changeGridSize(50)" id="grid-50">
+          <button class="grid-btn" data-size="50">
             <i class="fas fa-th-large"></i> 50px
           </button>
         </div>
       </div>
-      
       <div class="control-section">
         <div class="control-title"><i class="fas fa-palette"></i> Выбор Цвета</div>
         <div class="color-palette">
-          <div class="color-option active" style="background-color: #000000" onclick="applyColor('#000000')" title="Черный"></div>
-          <div class="color-option" style="background-color: #ff0000" onclick="applyColor('#ff0000')" title="Красный"></div>
-          <div class="color-option" style="background-color: #00ff00" onclick="applyColor('#00ff00')" title="Зеленый"></div>
-          <div class="color-option" style="background-color: #0000ff" onclick="applyColor('#0000ff')" title="Синий"></div>
-          <div class="color-option" style="background-color: #ffff00" onclick="applyColor('#ffff00')" title="Желтый"></div>
-          <div class="color-option" style="background-color: #ff00ff" onclick="applyColor('#ff00ff')" title="Пурпурный"></div>
-          <div class="color-option" style="background-color: #00ffff" onclick="applyColor('#00ffff')" title="Голубой"></div>
-          <div class="color-option" style="background-color: #ffa500" onclick="applyColor('#ffa500')" title="Оранжевый"></div>
-          <div class="color-option" style="background-color: #800080" onclick="applyColor('#800080')" title="Фиолетовый"></div>
-          <div class="color-option" style="background-color: #a52a2a" onclick="applyColor('#a52a2a')" title="Коричневый"></div>
-          <div class="color-option" style="background-color: #ffffff; border: 2px solid #ddd;" onclick="applyColor('#ffffff')" title="Белый"></div>
-          <div class="color-option" style="background-color: #808080" onclick="applyColor('#808080')" title="Серый"></div>
+          <div class="color-option active" style="background-color: #000000" data-color="#000000" title="Черный"></div>
+          <div class="color-option" style="background-color: #ff0000" data-color="#ff0000" title="Красный"></div>
+          <div class="color-option" style="background-color: #00ff00" data-color="#00ff00" title="Зеленый"></div>
+          <div class="color-option" style="background-color: #0000ff" data-color="#0000ff" title="Синий"></div>
+          <div class="color-option" style="background-color: #ffff00" data-color="#ffff00" title="Желтый"></div>
+          <div class="color-option" style="background-color: #ff00ff" data-color="#ff00ff" title="Пурпурный"></div>
+          <div class="color-option" style="background-color: #00ffff" data-color="#00ffff" title="Голубой"></div>
+          <div class="color-option" style="background-color: #ffa500" data-color="#ffa500" title="Оранжевый"></div>
+          <div class="color-option" style="background-color: #800080" data-color="#800080" title="Фиолетовый"></div>
+          <div class="color-option" style="background-color: #a52a2a" data-color="#a52a2a" title="Коричневый"></div>
+          <div class="color-option" style="background-color: #ffffff; border: 2px solid #ddd;" data-color="#ffffff" title="Белый"></div>
+          <div class="color-option" style="background-color: #808080" data-color="#808080" title="Серый"></div>
         </div>
         <input type="text" id="color-picker" />
       </div>
-      
       <div class="control-section">
         <div class="control-title"><i class="fas fa-paint-brush"></i> Настройки Кисти</div>
         <div class="brush-controls">
           <div class="brush-preview" id="brush-preview">5</div>
           <div class="flex-grow-1" style="flex: 1;">
             <label for="brushWidth">Толщина: <span id="brush-width-value">5</span>px</label>
-            <input type="range" id="brushWidth" class="form-control-range" value="5" min="1" max="30" oninput="changeWidth(this.value)">
+            <input type="range" id="brushWidth" class="form-control-range" value="5" min="1" max="30">
           </div>
         </div>
       </div>
-      
       <div class="control-section" id="shape-controls-section" style="display: none;">
         <div class="control-title"><i class="fas fa-shapes"></i> Настройки Фигур</div>
         <div class="shape-fill-controls">
-          <button class="fill-btn active" id="fill-none" onclick="setFillMode('none')">
+          <button class="fill-btn active" id="fill-none" data-fill="none">
             <i class="far fa-square"></i> Контур
           </button>
-          <button class="fill-btn" id="fill-solid" onclick="setFillMode('solid')">
+          <button class="fill-btn" id="fill-solid" data-fill="solid">
             <i class="fas fa-square"></i> Заливка
           </button>
         </div>
       </div>
-      
       <div class="control-section" id="text-controls-section" style="display: none;">
         <div class="control-title"><i class="fas fa-font"></i> Настройки Текста</div>
         <div class="text-controls">
           <div class="text-control">
             <label for="fontSize">Размер</label>
-            <input type="number" id="fontSize" class="form-control" value="24" min="8" max="72" onchange="updateTextSettings()">
+            <input type="number" id="fontSize" class="form-control" value="24" min="8" max="72">
           </div>
           <div class="text-control">
             <label for="fontFamily">Шрифт</label>
-            <select id="fontFamily" class="form-control" onchange="updateTextSettings()">
+            <select id="fontFamily" class="form-control">
               <option value="Arial">Arial</option>
               <option value="Helvetica">Helvetica</option>
               <option value="Times New Roman">Times New Roman</option>
@@ -1606,37 +300,34 @@
           </div>
         </div>
       </div>
-      
       <div class="control-section">
         <div class="control-title"><i class="fas fa-layer-group"></i> Управление Слоями</div>
         <div class="layer-controls">
-          <button class="layer-btn" onclick="sendBackward()">
+          <button class="layer-btn" id="sendBackwardBtn">
             <i class="fas fa-arrow-down"></i> Назад
           </button>
-          <button class="layer-btn" onclick="bringForward()">
+          <button class="layer-btn" id="bringForwardBtn">
             <i class="fas fa-arrow-up"></i> Вперед
           </button>
-          <button class="layer-btn" onclick="sendToBack()">
+          <button class="layer-btn" id="sendToBackBtn">
             <i class="fas fa-arrow-to-bottom"></i> На Задний План
           </button>
-          <button class="layer-btn" onclick="bringToFront()">
+          <button class="layer-btn" id="bringToFrontBtn">
             <i class="fas fa-arrow-to-top"></i> На Передний План
           </button>
         </div>
       </div>
     </div>
-    
     <div class="status-bar">
       <div id="status">Готов к рисованию</div>
       <div id="coordinates">X: 0, Y: 0</div>
       <div id="shortcuts-hint"><i class="fas fa-keyboard"></i> Ctrl+Z: Отмена | Ctrl+Y: Возврат</div>
     </div>
-    
     <footer>
       <p><i class="fas fa-heart" style="color: #e74c3c;"></i> Улучшенная Интерактивная Доска 2024</p>
     </footer>
   </div>
-
+  
   <!-- Floating Zoom Panel -->
   <div class="zoom-panel">
     <div class="zoom-panel-title">
@@ -1644,15 +335,15 @@
       Зум
     </div>
     <div class="zoom-controls">
-      <button class="zoom-btn" onclick="zoomOut()" title="Уменьшить">
+      <button class="zoom-btn" id="zoomOutBtn" title="Уменьшить">
         <i class="fas fa-minus"></i>
       </button>
       <div class="zoom-display" id="zoom-display">100%</div>
-      <button class="zoom-btn" onclick="zoomIn()" title="Увеличить">
+      <button class="zoom-btn" id="zoomInBtn" title="Увеличить">
         <i class="fas fa-plus"></i>
       </button>
     </div>
-    <button class="zoom-btn" onclick="resetZoom()" title="Сброс" style="width: 100%;">
+    <button class="zoom-btn" id="resetZoomBtn" title="Сброс" style="width: 100%;">
       <i class="fas fa-sync-alt"></i>
     </button>
   </div>
@@ -1672,31 +363,29 @@
             <label for="canvasName"><strong>Название Холста</strong></label>
             <input type="text" class="form-control" id="canvasName" placeholder="Введите название" value="Новый Холст">
           </div>
-          
           <label><strong>Выберите Размер:</strong></label>
           <div class="canvas-size-controls">
-            <div class="size-btn active" data-size="standard" onclick="selectPresetSize('standard', event)">
+            <div class="size-btn active" data-size="standard">
               <div class="size-icon"><i class="fas fa-square"></i></div>
               <div class="size-label">Стандартный</div>
               <div class="size-dimensions">800×500</div>
             </div>
-            <div class="size-btn" data-size="wide" onclick="selectPresetSize('wide', event)">
+            <div class="size-btn" data-size="wide">
               <div class="size-icon"><i class="fas fa-arrows-alt-h"></i></div>
               <div class="size-label">Широкий</div>
               <div class="size-dimensions">1200×500</div>
             </div>
-            <div class="size-btn" data-size="long" onclick="selectPresetSize('long', event)">
+            <div class="size-btn" data-size="long">
               <div class="size-icon"><i class="fas fa-arrows-alt-v"></i></div>
               <div class="size-label">Длинный</div>
               <div class="size-dimensions">800×800</div>
             </div>
-            <div class="size-btn" data-size="large" onclick="selectPresetSize('large', event)">
+            <div class="size-btn" data-size="large">
               <div class="size-icon"><i class="fas fa-expand"></i></div>
               <div class="size-label">Большой</div>
               <div class="size-dimensions">1200×800</div>
             </div>
           </div>
-          
           <div class="form-group mt-3">
             <label for="newCanvasWidth"><strong>Или Укажите Свой Размер:</strong></label>
             <input type="number" class="form-control mb-2" id="newCanvasWidth" placeholder="Ширина" min="100" max="2000" value="800">
@@ -1705,7 +394,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-          <button type="button" class="btn btn-primary" onclick="createNewCanvas()">
+          <button type="button" class="btn btn-primary" id="createCanvasBtn">
             <i class="fas fa-plus"></i> Создать
           </button>
         </div>
@@ -1726,34 +415,33 @@
         <div class="modal-body">
           <label><strong>Выберите Размер:</strong></label>
           <div class="canvas-size-controls">
-            <div class="size-btn" data-size="standard" onclick="changeCanvasSize('standard', event)">
+            <div class="size-btn" data-size="standard">
               <div class="size-icon"><i class="fas fa-square"></i></div>
               <div class="size-label">Стандартный</div>
               <div class="size-dimensions">800×500</div>
             </div>
-            <div class="size-btn" data-size="wide" onclick="changeCanvasSize('wide', event)">
+            <div class="size-btn" data-size="wide">
               <div class="size-icon"><i class="fas fa-arrows-alt-h"></i></div>
               <div class="size-label">Широкий</div>
               <div class="size-dimensions">1200×500</div>
             </div>
-            <div class="size-btn" data-size="long" onclick="changeCanvasSize('long', event)">
+            <div class="size-btn" data-size="long">
               <div class="size-icon"><i class="fas fa-arrows-alt-v"></i></div>
               <div class="size-label">Длинный</div>
               <div class="size-dimensions">800×800</div>
             </div>
-            <div class="size-btn" data-size="large" onclick="changeCanvasSize('large', event)">
+            <div class="size-btn" data-size="large">
               <div class="size-icon"><i class="fas fa-expand"></i></div>
               <div class="size-label">Большой</div>
               <div class="size-dimensions">1200×800</div>
             </div>
           </div>
-          
           <div class="form-group mt-3">
             <label for="customWidth"><strong>Или Укажите Свой Размер:</strong></label>
             <input type="number" class="form-control mb-2" id="customWidth" placeholder="Ширина" min="100" max="2000" value="800">
             <input type="number" class="form-control" id="customHeight" placeholder="Высота" min="100" max="2000" value="500">
           </div>
-          <button class="btn btn-primary btn-block" onclick="applyCustomSize()">
+          <button class="btn btn-primary btn-block" id="applyCustomSizeBtn">
             <i class="fas fa-check"></i> Применить Размер
           </button>
         </div>
@@ -1777,25 +465,25 @@
               <div class="calculator-operation" id="calcOperation"></div>
               <div class="calculator-display" id="calcDisplay">0</div>
             </div>
-            <button class="calculator-btn clear" onclick="clearCalculator()">C</button>
-            <button class="calculator-btn delete" onclick="deleteLast()">⌫</button>
-            <button class="calculator-btn operator" onclick="handleOperator('%')">%</button>
-            <button class="calculator-btn operator" onclick="handleOperator('/')">/</button>
-            <button class="calculator-btn" onclick="appendNumber('7')">7</button>
-            <button class="calculator-btn" onclick="appendNumber('8')">8</button>
-            <button class="calculator-btn" onclick="appendNumber('9')">9</button>
-            <button class="calculator-btn operator" onclick="handleOperator('*')">×</button>
-            <button class="calculator-btn" onclick="appendNumber('4')">4</button>
-            <button class="calculator-btn" onclick="appendNumber('5')">5</button>
-            <button class="calculator-btn" onclick="appendNumber('6')">6</button>
-            <button class="calculator-btn operator" onclick="handleOperator('-')">-</button>
-            <button class="calculator-btn" onclick="appendNumber('1')">1</button>
-            <button class="calculator-btn" onclick="appendNumber('2')">2</button>
-            <button class="calculator-btn" onclick="appendNumber('3')">3</button>
-            <button class="calculator-btn operator" onclick="handleOperator('+')">+</button>
-            <button class="calculator-btn" onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
-            <button class="calculator-btn" onclick="appendDecimal()">.</button>
-            <button class="calculator-btn equals" onclick="calculateResult()">=</button>
+            <button class="calculator-btn clear" id="calcClear">C</button>
+            <button class="calculator-btn delete" id="calcDelete">⌫</button>
+            <button class="calculator-btn operator" data-operator="%">%</button>
+            <button class="calculator-btn operator" data-operator="/">/</button>
+            <button class="calculator-btn" data-number="7">7</button>
+            <button class="calculator-btn" data-number="8">8</button>
+            <button class="calculator-btn" data-number="9">9</button>
+            <button class="calculator-btn operator" data-operator="*">×</button>
+            <button class="calculator-btn" data-number="4">4</button>
+            <button class="calculator-btn" data-number="5">5</button>
+            <button class="calculator-btn" data-number="6">6</button>
+            <button class="calculator-btn operator" data-operator="-">-</button>
+            <button class="calculator-btn" data-number="1">1</button>
+            <button class="calculator-btn" data-number="2">2</button>
+            <button class="calculator-btn" data-number="3">3</button>
+            <button class="calculator-btn operator" data-operator="+">+</button>
+            <button class="calculator-btn" data-number="0" style="grid-column: span 2;">0</button>
+            <button class="calculator-btn" id="calcDecimal">.</button>
+            <button class="calculator-btn equals" id="calcEquals">=</button>
           </div>
         </div>
       </div>
@@ -1806,1092 +494,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
-  <script>
-    // Initialize variables
-    let canvas;
-    let isDrawing = false;
-    let currentColor = '#000000';
-    let currentWidth = 5;
-    let drawingMode = true;
-    let history = [];
-    let historyIndex = -1;
-    let gridEnabled = false;
-    let gridSize = 20;
-    let gridPattern = null;
-    let currentTool = 'pencil';
-    let isDrawingShape = false;
-    let startX, startY;
-    let currentShape = null;
-    let fontSize = 24;
-    let fontFamily = 'Arial';
-    let fillMode = 'none';
-    let zoomLevel = 1;
-    let selectedPresetSize = 'standard';
-    
-    // Multiple canvases management
-    let canvases = [];
-    let currentCanvasId = 0;
-    let canvasCounter = 0;
-    
-    // Calculator variables
-    let calcDisplayValue = '0';
-    let firstOperand = null;
-    let waitingForSecondOperand = false;
-    let operator = null;
-    let operationString = '';
-    
-    // Функции для управления боковым меню и темами
-    
-    // Открытие/закрытие бокового меню
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
-    }
-    
-    // Закрытие бокового меню
-    function closeSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.remove('open');
-    }
-    
-    // Изменение темы оформления
-    function changeTheme(themeName) {
-      // Удаляем все классы тем
-      document.body.classList.remove('theme-dark', 'theme-nature', 'theme-ocean', 'theme-sunset', 'theme-purple');
-      
-      // Добавляем выбранную тему, если это не тема по умолчанию
-      if (themeName !== 'default') {
-        document.body.classList.add(`theme-${themeName}`);
-      }
-      
-      // Обновляем активную тему в меню
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-      });
-      document.querySelector(`.theme-option[data-theme="${themeName}"]`).classList.add('active');
-      
-      // Сохраняем выбор в localStorage
-      localStorage.setItem('selectedTheme', themeName);
-      
-      // Показываем уведомление
-      showToast(`Тема "${getThemeDisplayName(themeName)}" применена`, 'success');
-    }
-    
-    // Получение отображаемого имени темы
-    function getThemeDisplayName(themeName) {
-      const themeNames = {
-        'default': 'По умолчанию',
-        'dark': 'Темная',
-        'nature': 'Природа',
-        'ocean': 'Океан',
-        'sunset': 'Закат',
-        'purple': 'Фиолетовая'
-      };
-      return themeNames[themeName] || themeName;
-    }
-    
-    // Изменение ширины боковой панели
-    function changeSidebarWidth(width) {
-      document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
-      localStorage.setItem('sidebarWidth', width);
-    }
-    
-    // Изменение скорости анимации
-    function changeAnimationSpeed(speed) {
-      const root = document.documentElement;
-      
-      switch(speed) {
-        case 'slow':
-          root.style.setProperty('--animation-duration', '0.5s');
-          break;
-        case 'normal':
-          root.style.setProperty('--animation-duration', '0.3s');
-          break;
-        case 'fast':
-          root.style.setProperty('--animation-duration', '0.15s');
-          break;
-        case 'none':
-          root.style.setProperty('--animation-duration', '0s');
-          break;
-      }
-      
-      localStorage.setItem('animationSpeed', speed);
-      showToast(`Скорость анимации: ${speed}`, 'info');
-    }
-    
-    // Загрузка сохраненных настроек при загрузке страницы
-    function loadSettings() {
-      // Загрузка темы
-      const savedTheme = localStorage.getItem('selectedTheme') || 'default';
-      changeTheme(savedTheme);
-      
-      // Загрузка ширины боковой панели
-      const savedWidth = localStorage.getItem('sidebarWidth') || '280';
-      document.documentElement.style.setProperty('--sidebar-width', `${savedWidth}px`);
-      document.getElementById('sidebarWidth').value = savedWidth;
-      
-      // Загрузка скорости анимации
-      const savedSpeed = localStorage.getItem('animationSpeed') || 'normal';
-      document.getElementById('animationSpeed').value = savedSpeed;
-      changeAnimationSpeed(savedSpeed);
-    }
-    
-    // Initialize the application
-    $(document).ready(function() {
-      // Create first canvas
-      createFirstCanvas();
-      
-      // Initialize color picker
-      $("#color-picker").spectrum({
-        color: currentColor,
-        showPalette: true,
-        showInput: true,
-        preferredFormat: "hex",
-        change: function(color) {
-          currentColor = color.toHexString();
-          canvas.freeDrawingBrush.color = currentColor;
-          updateActiveColor(currentColor);
-        }
-      });
-      
-      // Назначаем обработчики событий для бокового меню
-      document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
-      document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
-      
-      // Назначаем обработчики для выбора тем
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.addEventListener('click', function() {
-          const theme = this.getAttribute('data-theme');
-          changeTheme(theme);
-        });
-      });
-      
-      // Загружаем сохраненные настройки
-      loadSettings();
-      
-      // Закрытие бокового меню при клике вне его
-      document.addEventListener('click', function(event) {
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('sidebarToggle');
-        
-        if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target) && sidebar.classList.contains('open')) {
-          closeSidebar();
-        }
-      });
-      
-      // Keyboard shortcuts
-      $(document).on('keydown', function(e) {
-        // Ctrl+Z - Undo
-        if (e.ctrlKey && e.key === 'z') {
-          e.preventDefault();
-          undo();
-        }
-        // Ctrl+Y - Redo
-        if (e.ctrlKey && e.key === 'y') {
-          e.preventDefault();
-          redo();
-        }
-        // Ctrl+S - Save
-        if (e.ctrlKey && e.key === 's') {
-          e.preventDefault();
-          saveCanvas();
-        }
-        // Delete - Delete selected object
-        if (e.key === 'Delete') {
-          const activeObject = canvas.getActiveObject();
-          if (activeObject) {
-            canvas.remove(activeObject);
-            saveState();
-          }
-        }
-      });
-      
-      updateStatus();
-      updateCalculatorDisplay();
-    });
-    
-    // ========== CANVAS INITIALIZATION ==========
-    function createFirstCanvas() {
-      const canvasId = canvasCounter++;
-      const canvasName = 'Холст 1';
-      
-      const canvasData = {
-        id: canvasId,
-        name: canvasName,
-        width: 800,
-        height: 500,
-        objects: [],
-        history: [],
-        historyIndex: -1,
-        drawingMode: true,
-        currentColor: '#000000',
-        currentWidth: 5,
-        currentTool: 'pencil'
-      };
-      
-      canvases.push(canvasData);
-      createCanvasTab(canvasId, canvasName);
-      currentCanvasId = canvasId;
-      
-      initCanvas(canvasData.width, canvasData.height);
-    }
-    
-    function initCanvas(width = 800, height = 500) {
-      if (canvas) {
-        canvas.dispose();
-      }
-      
-      // Создаем canvas с правильными размерами
-      const canvasElement = document.getElementById('whiteboard');
-      canvasElement.width = width;
-      canvasElement.height = height;
-      
-      canvas = new fabric.Canvas('whiteboard', {
-        width: width,
-        height: height,
-        isDrawingMode: true,
-        backgroundColor: '#ffffff'
-      });
-      
-      canvas.freeDrawingBrush.width = currentWidth;
-      canvas.freeDrawingBrush.color = currentColor;
-      
-      // Event listeners
-      canvas.on('path:created', function() {
-        saveState();
-      });
-      
-      canvas.on('object:added', function() {
-        if (!isDrawingShape) {
-          saveState();
-        }
-      });
-      
-      canvas.on('object:modified', function() {
-        saveState();
-      });
-      
-      canvas.on('mouse:move', function(e) {
-        const pointer = canvas.getPointer(e.e);
-        $('#coordinates').text(`X: ${Math.round(pointer.x)}, Y: ${Math.round(pointer.y)}`);
-      });
-      
-      canvas.on('selection:created', function(e) {
-        const obj = e.selected[0];
-        updateStatus(`Выбрано: ${obj.type}`);
-      });
-      
-      canvas.on('selection:cleared', function() {
-        updateStatus('Готов к рисованию');
-      });
-      
-      saveState();
-    }
-    
-    // ========== MULTIPLE CANVASES MANAGEMENT ==========
-    function createNewCanvas() {
-      const name = $('#canvasName').val() || `Холст ${canvasCounter + 1}`;
-      const width = parseInt($('#newCanvasWidth').val()) || 800;
-      const height = parseInt($('#newCanvasHeight').val()) || 500;
-      
-      const canvasId = canvasCounter++;
-      
-      const canvasData = {
-        id: canvasId,
-        name: name,
-        width: width,
-        height: height,
-        objects: [],
-        history: [],
-        historyIndex: -1,
-        drawingMode: true,
-        currentColor: currentColor,
-        currentWidth: currentWidth,
-        currentTool: currentTool
-      };
-      
-      canvases.push(canvasData);
-      createCanvasTab(canvasId, name);
-      switchCanvas(canvasId);
-      
-      $('#newCanvasModal').modal('hide');
-      showToast('Холст создан!', 'success');
-    }
-    
-    function createCanvasTab(canvasId, canvasName) {
-      const isFirst = canvases.length === 1;
-      const tabHtml = `
-        <div class="canvas-tab ${isFirst ? 'active' : ''}" data-canvas-id="${canvasId}">
-          <div class="canvas-tab-name">${canvasName}</div>
-          ${canvases.length > 1 ? `<button class="tab-close" onclick="event.stopPropagation(); closeCanvas(${canvasId})"><i class="fas fa-times"></i></button>` : ''}
-        </div>
-      `;
-      
-      // Remove add button if exists
-      $('.add-tab-btn').remove();
-      
-      $('#canvasTabs').append(tabHtml);
-      
-      // Add "+" button
-      $('#canvasTabs').append('<button class="add-tab-btn" data-toggle="modal" data-target="#newCanvasModal"><i class="fas fa-plus"></i></button>');
-      
-      // Add click event
-      $(`.canvas-tab[data-canvas-id="${canvasId}"]`).click(function() {
-        switchCanvas(canvasId);
-      });
-    }
-    
-    function switchCanvas(canvasId) {
-      $('.canvas-tab').removeClass('active');
-      $(`.canvas-tab[data-canvas-id="${canvasId}"]`).addClass('active');
-      
-      if (currentCanvasId !== null && currentCanvasId !== canvasId) {
-        saveCanvasState(currentCanvasId);
-      }
-      
-      currentCanvasId = canvasId;
-      loadCanvasState(canvasId);
-    }
-    
-    function saveCanvasState(canvasId) {
-      const canvasData = canvases.find(c => c.id === canvasId);
-      if (!canvasData || !canvas) return;
-      
-      canvasData.objects = canvas.toJSON();
-      canvasData.history = history;
-      canvasData.historyIndex = historyIndex;
-      canvasData.drawingMode = drawingMode;
-      canvasData.currentColor = currentColor;
-      canvasData.currentWidth = currentWidth;
-      canvasData.currentTool = currentTool;
-      canvasData.width = canvas.getWidth();
-      canvasData.height = canvas.getHeight();
-    }
-    
-    function loadCanvasState(canvasId) {
-      const canvasData = canvases.find(c => c.id === canvasId);
-      if (!canvasData) return;
-      
-      initCanvas(canvasData.width, canvasData.height);
-      
-      if (canvasData.objects && canvasData.objects.objects) {
-        canvas.loadFromJSON(canvasData.objects, function() {
-          canvas.renderAll();
-        });
-      }
-      
-      history = canvasData.history || [];
-      historyIndex = canvasData.historyIndex || -1;
-      drawingMode = canvasData.drawingMode;
-      currentColor = canvasData.currentColor || '#000000';
-      currentWidth = canvasData.currentWidth || 5;
-      currentTool = canvasData.currentTool || 'pencil';
-      
-      updateActiveColor(currentColor);
-      $("#color-picker").spectrum("set", currentColor);
-      $("#brushWidth").val(currentWidth);
-      $("#brush-width-value").text(currentWidth);
-      $("#brush-preview").text(currentWidth);
-      
-      canvas.freeDrawingBrush.width = currentWidth;
-      canvas.freeDrawingBrush.color = currentColor;
-      canvas.isDrawingMode = drawingMode;
-      
-      updateDrawingModeUI();
-      setDrawingMode(currentTool);
-      updateUndoRedoButtons();
-    }
-    
-    function closeCanvas(canvasId) {
-      if (canvases.length <= 1) {
-        alert("Должен остаться хотя бы один холст!");
-        return;
-      }
-      
-      const index = canvases.findIndex(c => c.id === canvasId);
-      if (index === -1) return;
-      
-      canvases.splice(index, 1);
-      $(`.canvas-tab[data-canvas-id="${canvasId}"]`).remove();
-      
-      if (currentCanvasId === canvasId) {
-        const newCanvasId = canvases[0].id;
-        switchCanvas(newCanvasId);
-      }
-    }
-    
-    // ========== DRAWING MODES ==========
-    function setDrawingMode(mode) {
-      currentTool = mode;
-      
-      $('.drawing-tool').removeClass('active');
-      $('.drawing-tool').each(function() {
-        if ($(this).attr('onclick').includes(mode)) {
-          $(this).addClass('active');
-        }
-      });
-      
-      $('#text-controls-section').toggle(mode === 'text');
-      $('#shape-controls-section').toggle(mode === 'rectangle' || mode === 'circle');
-      
-      if (mode === 'pencil') {
-        canvas.isDrawingMode = true;
-        canvas.selection = true;
-        updateDrawingModeUI();
-        removeShapeListeners();
-      } else {
-        canvas.isDrawingMode = false;
-        updateDrawingModeUI();
-        setupShapeDrawing(mode);
-      }
-      
-      updateStatus(`Инструмент: ${getToolName(mode)}`);
-    }
-    
-    function getToolName(mode) {
-      const names = {
-        'pencil': 'Карандаш',
-        'line': 'Линия',
-        'rectangle': 'Прямоугольник',
-        'circle': 'Круг',
-        'text': 'Текст',
-        'select': 'Выбор'
-      };
-      return names[mode] || mode;
-    }
-    
-    function removeShapeListeners() {
-      canvas.off('mouse:down');
-      canvas.off('mouse:move');
-      canvas.off('mouse:up');
-    }
-    
-    function setupShapeDrawing(mode) {
-      removeShapeListeners();
-      
-      if (mode === 'line' || mode === 'rectangle' || mode === 'circle') {
-        canvas.on('mouse:down', startDrawingShape);
-        canvas.on('mouse:move', drawShape);
-        canvas.on('mouse:up', finishDrawingShape);
-      } else if (mode === 'text') {
-        canvas.on('mouse:down', addText);
-      } else if (mode === 'select') {
-        canvas.selection = true;
-      }
-    }
-    
-    function startDrawingShape(o) {
-      if (o.target) return; // Don't start drawing if clicking on an object
-      
-      isDrawingShape = true;
-      const pointer = canvas.getPointer(o.e);
-      startX = pointer.x;
-      startY = pointer.y;
-      
-      if (currentTool === 'line') {
-        currentShape = new fabric.Line([startX, startY, startX, startY], {
-          stroke: currentColor,
-          strokeWidth: currentWidth,
-          selectable: false
-        });
-      } else if (currentTool === 'rectangle') {
-        currentShape = new fabric.Rect({
-          left: startX,
-          top: startY,
-          width: 0,
-          height: 0,
-          fill: fillMode === 'solid' ? currentColor : 'transparent',
-          stroke: currentColor,
-          strokeWidth: currentWidth,
-          selectable: false
-        });
-      } else if (currentTool === 'circle') {
-        currentShape = new fabric.Circle({
-          left: startX,
-          top: startY,
-          radius: 0,
-          fill: fillMode === 'solid' ? currentColor : 'transparent',
-          stroke: currentColor,
-          strokeWidth: currentWidth,
-          selectable: false,
-          originX: 'center',
-          originY: 'center'
-        });
-      }
-      
-      if (currentShape) {
-        canvas.add(currentShape);
-      }
-    }
-    
-    function drawShape(o) {
-      if (!isDrawingShape || !currentShape) return;
-      
-      const pointer = canvas.getPointer(o.e);
-      
-      if (currentTool === 'line') {
-        currentShape.set({ x2: pointer.x, y2: pointer.y });
-      } else if (currentTool === 'rectangle') {
-        const width = pointer.x - startX;
-        const height = pointer.y - startY;
-        
-        currentShape.set({
-          width: Math.abs(width),
-          height: Math.abs(height),
-          left: width < 0 ? pointer.x : startX,
-          top: height < 0 ? pointer.y : startY
-        });
-      } else if (currentTool === 'circle') {
-        const radius = Math.sqrt(Math.pow(pointer.x - startX, 2) + Math.pow(pointer.y - startY, 2));
-        currentShape.set({
-          radius: radius,
-          left: startX,
-          top: startY
-        });
-      }
-      
-      canvas.renderAll();
-    }
-    
-    function finishDrawingShape() {
-      if (currentShape) {
-        currentShape.set({ selectable: true });
-        isDrawingShape = false;
-        currentShape = null;
-        saveState();
-      }
-    }
-    
-    function addText(o) {
-      if (o.target) return;
-      
-      const pointer = canvas.getPointer(o.e);
-      const text = new fabric.IText('Введите текст...', {
-        left: pointer.x,
-        top: pointer.y,
-        fontFamily: fontFamily,
-        fill: currentColor,
-        fontSize: fontSize,
-        editable: true
-      });
-      
-      canvas.add(text);
-      canvas.setActiveObject(text);
-      text.enterEditing();
-      text.selectAll();
-    }
-    
-    function setFillMode(mode) {
-      fillMode = mode;
-      $('.fill-btn').removeClass('active');
-      $(`#fill-${mode}`).addClass('active');
-    }
-    
-    function updateTextSettings() {
-      fontSize = parseInt($('#fontSize').val()) || 24;
-      fontFamily = $('#fontFamily').val() || 'Arial';
-      
-      const activeObject = canvas.getActiveObject();
-      if (activeObject && activeObject.type === 'i-text') {
-        activeObject.set({
-          fontSize: fontSize,
-          fontFamily: fontFamily
-        });
-        canvas.renderAll();
-      }
-    }
-    
-    // ========== CANVAS SIZE MANAGEMENT ==========
-    function selectPresetSize(size, event) {
-      if (event) event.stopPropagation();
-      
-      selectedPresetSize = size;
-      
-      // Update UI in modal
-      $('#newCanvasModal .size-btn').removeClass('active');
-      $(`#newCanvasModal .size-btn[data-size="${size}"]`).addClass('active');
-      
-      const sizes = {
-        'standard': { width: 800, height: 500 },
-        'wide': { width: 1200, height: 500 },
-        'long': { width: 800, height: 800 },
-        'large': { width: 1200, height: 800 }
-      };
-      
-      const selected = sizes[size] || sizes['standard'];
-      $('#newCanvasWidth').val(selected.width);
-      $('#newCanvasHeight').val(selected.height);
-    }
-    
-    function changeCanvasSize(size, event) {
-      if (event) event.stopPropagation();
-      
-      // Update UI in modal
-      $('#canvasSizeModal .size-btn').removeClass('active');
-      $(`#canvasSizeModal .size-btn[data-size="${size}"]`).addClass('active');
-      
-      const sizes = {
-        'standard': { width: 800, height: 500 },
-        'wide': { width: 1200, height: 500 },
-        'long': { width: 800, height: 800 },
-        'large': { width: 1200, height: 800 }
-      };
-      
-      const selected = sizes[size] || sizes['standard'];
-      applyCanvasSize(selected.width, selected.height);
-      
-      $('#canvasSizeModal').modal('hide');
-      showToast(`Размер изменен: ${selected.width}×${selected.height}`, 'success');
-    }
-    
-    function applyCustomSize() {
-      const width = parseInt($('#customWidth').val()) || 800;
-      const height = parseInt($('#customHeight').val()) || 500;
-      
-      applyCanvasSize(width, height);
-      $('#canvasSizeModal').modal('hide');
-      showToast(`Размер изменен: ${width}×${height}`, 'success');
-    }
-    
-    function applyCanvasSize(width, height) {
-      if (!canvas) return;
-      
-      const objects = canvas.toJSON();
-      
-      // Обновляем размеры canvas правильно
-      canvas.setDimensions({ width: width, height: height });
-      
-      const currentCanvas = canvases.find(c => c.id === currentCanvasId);
-      if (currentCanvas) {
-        currentCanvas.width = width;
-        currentCanvas.height = height;
-      }
-      
-      canvas.loadFromJSON(objects, function() {
-        canvas.renderAll();
-      });
-      
-      updateStatus(`Размер: ${width}×${height}`);
-    }
-    
-    // ========== ZOOM CONTROLS ==========
-    function zoomIn() {
-      if (zoomLevel < 3) {
-        zoomLevel += 0.1;
-        updateZoom();
-      }
-    }
-    
-    function zoomOut() {
-      if (zoomLevel > 0.3) {
-        zoomLevel -= 0.1;
-        updateZoom();
-      }
-    }
-    
-    function resetZoom() {
-      zoomLevel = 1;
-      updateZoom();
-    }
-    
-    function updateZoom() {
-      const wrapper = document.getElementById('canvasWrapper');
-      wrapper.style.transform = `scale(${zoomLevel})`;
-      wrapper.style.transformOrigin = 'top left';
-      
-      document.getElementById('zoom-display').textContent = `${Math.round(zoomLevel * 100)}%`;
-      showToast(`Зум: ${Math.round(zoomLevel * 100)}%`, 'info');
-    }
-    
-    // ========== DRAWING CONTROLS ==========
-    function toggleCanvas() {
-      drawingMode = !drawingMode;
-      canvas.isDrawingMode = drawingMode;
-      updateDrawingModeUI();
-    }
-    
-    function updateDrawingModeUI() {
-      const button = document.getElementById('toggle-drawing');
-      if (drawingMode) {
-        button.classList.add('drawing-mode-active');
-        button.classList.remove('btn-secondary');
-        button.classList.add('btn-success');
-        button.innerHTML = '<i class="fas fa-pencil-alt"></i> Рисование Включено';
-        updateStatus('Рисование включено');
-      } else {
-        button.classList.remove('drawing-mode-active');
-        button.classList.remove('btn-success');
-        button.classList.add('btn-secondary');
-        button.innerHTML = '<i class="fas fa-pencil-alt"></i> Рисование Выключено';
-        updateStatus('Рисование выключено');
-      }
-    }
-    
-    function clearCanvas() {
-      if (confirm('Вы уверены, что хотите очистить холст?')) {
-        canvas.clear();
-        canvas.backgroundColor = '#ffffff';
-        saveState();
-        showToast('Холст очищен', 'success');
-      }
-    }
-    
-    function changeWidth(width) {
-      currentWidth = parseInt(width);
-      canvas.freeDrawingBrush.width = currentWidth;
-      $('#brush-width-value').text(width);
-      $('#brush-preview').text(width);
-      $('#brush-preview').css({
-        width: (currentWidth * 4 + 40) + 'px',
-        height: (currentWidth * 4 + 40) + 'px'
-      });
-    }
-    
-    function applyColor(color) {
-      currentColor = color;
-      canvas.freeDrawingBrush.color = currentColor;
-      $("#color-picker").spectrum("set", currentColor);
-      updateActiveColor(color);
-    }
-    
-    function updateActiveColor(color) {
-      $('.color-option').removeClass('active');
-      $('.color-option').each(function() {
-        const bgColor = $(this).css('background-color');
-        const hex = rgbToHex(bgColor);
-        if (hex.toLowerCase() === color.toLowerCase()) {
-          $(this).addClass('active');
-        }
-      });
-    }
-    
-    function rgbToHex(rgb) {
-      const result = rgb.match(/\d+/g);
-      if (!result) return rgb;
-      return "#" + ((1 << 24) + (parseInt(result[0]) << 16) + (parseInt(result[1]) << 8) + parseInt(result[2])).toString(16).slice(1);
-    }
-    
-    // ========== GRID CONTROLS ==========
-    function toggleGrid() {
-      gridEnabled = !gridEnabled;
-      
-      if (gridEnabled) {
-        drawGrid();
-        $('#toggle-grid').addClass('active');
-        showToast('Сетка включена', 'success');
-      } else {
-        if (gridPattern) {
-          canvas.remove(gridPattern);
-          gridPattern = null;
-        }
-        $('#toggle-grid').removeClass('active');
-        showToast('Сетка выключена', 'info');
-      }
-    }
-    
-    function changeGridSize(size) {
-      gridSize = size;
-      
-      $('.grid-btn').not('#toggle-grid').removeClass('active');
-      $(`#grid-${size}`).addClass('active');
-      
-      if (gridEnabled) {
-        if (gridPattern) {
-          canvas.remove(gridPattern);
-        }
-        drawGrid();
-      }
-      
-      updateStatus(`Размер сетки: ${size}px`);
-    }
-    
-    function drawGrid() {
-      if (!gridEnabled) return;
-      
-      const width = canvas.getWidth();
-      const height = canvas.getHeight();
-      const gridGroup = [];
-      
-      for (let x = 0; x <= width; x += gridSize) {
-        gridGroup.push(new fabric.Line([x, 0, x, height], {
-          stroke: '#e0e0e0',
-          strokeWidth: 1,
-          selectable: false,
-          evented: false
-        }));
-      }
-      
-      for (let y = 0; y <= height; y += gridSize) {
-        gridGroup.push(new fabric.Line([0, y, width, y], {
-          stroke: '#e0e0e0',
-          strokeWidth: 1,
-          selectable: false,
-          evented: false
-        }));
-      }
-      
-      gridPattern = new fabric.Group(gridGroup, {
-        selectable: false,
-        evented: false
-      });
-      
-      canvas.add(gridPattern);
-      canvas.sendToBack(gridPattern);
-    }
-    
-    // ========== HISTORY MANAGEMENT ==========
-    function saveState() {
-      if (historyIndex < history.length - 1) {
-        history = history.slice(0, historyIndex + 1);
-      }
-      
-      history.push(JSON.stringify(canvas.toJSON()));
-      historyIndex++;
-      
-      // Limit history to 50 states
-      if (history.length > 50) {
-        history.shift();
-        historyIndex--;
-      }
-      
-      updateUndoRedoButtons();
-    }
-    
-    function undo() {
-      if (historyIndex > 0) {
-        historyIndex--;
-        canvas.loadFromJSON(history[historyIndex], function() {
-          canvas.renderAll();
-        });
-        updateUndoRedoButtons();
-        showToast('Отменено', 'info');
-      }
-    }
-    
-    function redo() {
-      if (historyIndex < history.length - 1) {
-        historyIndex++;
-        canvas.loadFromJSON(history[historyIndex], function() {
-          canvas.renderAll();
-        });
-        updateUndoRedoButtons();
-        showToast('Возвращено', 'info');
-      }
-    }
-    
-    function updateUndoRedoButtons() {
-      $('#undo-btn').prop('disabled', historyIndex <= 0);
-      $('#redo-btn').prop('disabled', historyIndex >= history.length - 1);
-    }
-    
-    // ========== SAVE AND LOAD ==========
-    function saveCanvas() {
-      const dataURL = canvas.toDataURL({
-        format: 'png',
-        quality: 1
-      });
-      
-      const link = document.createElement('a');
-      const currentCanvas = canvases.find(c => c.id === currentCanvasId);
-      const filename = currentCanvas ? currentCanvas.name : 'whiteboard';
-      link.download = `${filename}.png`;
-      link.href = dataURL;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      showToast('Холст сохранен!', 'success');
-    }
-    
-    function loadCanvas() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      
-      input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-              const fabricImage = new fabric.Image(img);
-              canvas.add(fabricImage);
-              saveState();
-              showToast('Изображение загружено!', 'success');
-            };
-            img.src = event.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      };
-      
-      input.click();
-    }
-    
-    // ========== LAYER MANAGEMENT ==========
-    function sendBackward() {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        canvas.sendBackwards(activeObject);
-        saveState();
-        showToast('Объект перемещен назад', 'info');
-      }
-    }
-    
-    function bringForward() {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        canvas.bringForward(activeObject);
-        saveState();
-        showToast('Объект перемещен вперед', 'info');
-      }
-    }
-    
-    function sendToBack() {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        canvas.sendToBack(activeObject);
-        saveState();
-        showToast('Объект перемещен на задний план', 'info');
-      }
-    }
-    
-    function bringToFront() {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject) {
-        canvas.bringToFront(activeObject);
-        saveState();
-        showToast('Объект перемещен на передний план', 'info');
-      }
-    }
-    
-    // ========== УЛУЧШЕННЫЙ КАЛЬКУЛЯТОР ==========
-    function updateCalculatorDisplay() {
-      $('#calcDisplay').text(calcDisplayValue);
-      $('#calcOperation').text(operationString);
-    }
-    
-    function appendNumber(number) {
-      if (waitingForSecondOperand) {
-        calcDisplayValue = number;
-        waitingForSecondOperand = false;
-      } else {
-        calcDisplayValue = calcDisplayValue === '0' ? number : calcDisplayValue + number;
-      }
-      updateCalculatorDisplay();
-    }
-    
-    function appendDecimal() {
-      if (waitingForSecondOperand) {
-        calcDisplayValue = '0.';
-        waitingForSecondOperand = false;
-      } else if (calcDisplayValue.indexOf('.') === -1) {
-        calcDisplayValue += '.';
-      }
-      updateCalculatorDisplay();
-    }
-    
-    function handleOperator(nextOperator) {
-      const inputValue = parseFloat(calcDisplayValue);
-      
-      if (firstOperand === null) {
-        firstOperand = inputValue;
-      } else if (operator) {
-        const result = performCalculation();
-        calcDisplayValue = `${parseFloat(result.toFixed(7))}`;
-        firstOperand = result;
-      }
-      
-      waitingForSecondOperand = true;
-      operator = nextOperator;
-      operationString = `${firstOperand} ${getOperatorSymbol(operator)}`;
-      updateCalculatorDisplay();
-    }
-    
-    function performCalculation() {
-      const inputValue = parseFloat(calcDisplayValue);
-      
-      if (isNaN(firstOperand) || isNaN(inputValue)) {
-        return inputValue;
-      }
-      
-      switch (operator) {
-        case '+':
-          return firstOperand + inputValue;
-        case '-':
-          return firstOperand - inputValue;
-        case '*':
-          return firstOperand * inputValue;
-        case '/':
-          return firstOperand / inputValue;
-        case '%':
-          return firstOperand % inputValue;
-        default:
-          return inputValue;
-      }
-    }
-    
-    function getOperatorSymbol(op) {
-      const symbols = {
-        '+': '+',
-        '-': '-',
-        '*': '×',
-        '/': '÷',
-        '%': '%'
-      };
-      return symbols[op] || op;
-    }
-    
-    function calculateResult() {
-      if (firstOperand !== null && operator && !waitingForSecondOperand) {
-        const result = performCalculation();
-        calcDisplayValue = `${parseFloat(result.toFixed(7))}`;
-        operationString = `${firstOperand} ${getOperatorSymbol(operator)} ${parseFloat(calcDisplayValue)} =`;
-        firstOperand = null;
-        operator = null;
-        waitingForSecondOperand = false;
-        updateCalculatorDisplay();
-      }
-    }
-    
-    function clearCalculator() {
-      calcDisplayValue = '0';
-      firstOperand = null;
-      operator = null;
-      waitingForSecondOperand = false;
-      operationString = '';
-      updateCalculatorDisplay();
-    }
-    
-    function deleteLast() {
-      if (calcDisplayValue.length > 1) {
-        calcDisplayValue = calcDisplayValue.slice(0, -1);
-      } else {
-        calcDisplayValue = '0';
-      }
-      updateCalculatorDisplay();
-    }
-    
-    // ========== UTILITY FUNCTIONS ==========
-    function updateStatus(message) {
-      $('#status').text(message);
-    }
-    
-    function showToast(message, type = 'info') {
-      const toast = $(`
-        <div class="toast-notification toast-${type}">
-          <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
-          <span>${message}</span>
-        </div>
-      `);
-      
-      $('body').append(toast);
-      
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
