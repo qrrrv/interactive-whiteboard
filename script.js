@@ -585,12 +585,15 @@ function closeCanvas(canvasId) {
   }
 }
 
-// Создание холста из модального окна
+// Создание холста из модального окна - ИСПРАВЛЕННАЯ ВЕРСИЯ
 function createCanvasFromModal() {
   const name = $('#canvasName').val() || 'Новый Холст';
-  const sizeType = $('.size-btn.active').data('size');
+  const activeSizeBtn = $('.size-btn.active');
+  const sizeType = activeSizeBtn.data('size');
   
   let width, height;
+  
+  console.log('Selected size type:', sizeType); // Для отладки
   
   if (sizeType === 'custom') {
     width = parseInt($('#newCanvasWidth').val()) || 800;
@@ -602,9 +605,16 @@ function createCanvasFromModal() {
       'long': [800, 800],
       'large': [1200, 800]
     };
-    [width, height] = sizes[sizeType] || [800, 500];
+    
+    if (sizes[sizeType]) {
+      [width, height] = sizes[sizeType];
+    } else {
+      // Если тип размера не найден, используем стандартный
+      [width, height] = [800, 500];
+    }
   }
   
+  console.log('Creating canvas with size:', width, 'x', height); // Для отладки
   createNewCanvas(name, width, height);
   $('#newCanvasModal').modal('hide');
 }
@@ -830,141 +840,200 @@ function loadSettings() {
   }
 }
 
-// Калькулятор
-$(document).ready(function() {
-  let calcDisplay = '0';
-  let calcOperation = '';
-  let firstOperand = null;
-  let waitingForSecondOperand = false;
-  let operator = null;
-
-  function updateCalcDisplay() {
-    $('#calcDisplay').text(calcDisplay);
-    $('#calcOperation').text(calcOperation);
-  }
-
-  function inputDigit(digit) {
-    if (waitingForSecondOperand) {
-      calcDisplay = digit;
-      waitingForSecondOperand = false;
-    } else {
-      calcDisplay = calcDisplay === '0' ? digit : calcDisplay + digit;
+// Калькулятор - ПОЛНОСТЬЮ НОВАЯ РАБОЧАЯ ВЕРСИЯ
+class Calculator {
+    constructor() {
+        this.currentInput = '0';
+        this.previousInput = '';
+        this.operator = null;
+        this.waitingForNewInput = false;
+        
+        this.displayElement = $('#calcDisplay');
+        this.operationElement = $('#calcOperation');
+        
+        this.initializeEventListeners();
+        this.updateDisplay();
     }
-    calcOperation = calcDisplay;
-  }
-
-  function inputDecimal() {
-    if (waitingForSecondOperand) {
-      calcDisplay = '0.';
-      waitingForSecondOperand = false;
-      return;
-    }
-
-    if (!calcDisplay.includes('.')) {
-      calcDisplay += '.';
-    }
-    calcOperation = calcDisplay;
-  }
-
-  function handleOperator(nextOperator) {
-    const inputValue = parseFloat(calcDisplay);
-
-    if (firstOperand === null) {
-      firstOperand = inputValue;
-    } else if (operator) {
-      const result = performCalculation();
-      calcDisplay = `${parseFloat(result.toFixed(7))}`;
-      firstOperand = result;
-    }
-
-    waitingForSecondOperand = true;
-    operator = nextOperator;
-    calcOperation = `${firstOperand} ${operator}`;
-  }
-
-  function performCalculation() {
-    const inputValue = parseFloat(calcDisplay);
     
-    if (isNaN(firstOperand) || isNaN(inputValue)) {
-      return 0;
+    initializeEventListeners() {
+        // Цифры
+        $('.calculator-btn[data-number]').click((e) => {
+            this.inputNumber($(e.target).data('number'));
+        });
+        
+        // Десятичная точка
+        $('#calcDecimal').click(() => {
+            this.inputDecimal();
+        });
+        
+        // Операторы
+        $('.calculator-btn[data-operator]').click((e) => {
+            this.handleOperator($(e.target).data('operator'));
+        });
+        
+        // Равно
+        $('#calcEquals').click(() => {
+            this.calculate();
+        });
+        
+        // Очистка
+        $('#calcClear').click(() => {
+            this.clear();
+        });
+        
+        // Удаление
+        $('#calcDelete').click(() => {
+            this.deleteLast();
+        });
     }
-
-    switch (operator) {
-      case '+':
-        return firstOperand + inputValue;
-      case '-':
-        return firstOperand - inputValue;
-      case '*':
-        return firstOperand * inputValue;
-      case '/':
-        return firstOperand / inputValue;
-      case '%':
-        return firstOperand % inputValue;
-      default:
-        return inputValue;
+    
+    inputNumber(num) {
+        if (this.waitingForNewInput) {
+            this.currentInput = String(num);
+            this.waitingForNewInput = false;
+        } else {
+            this.currentInput = this.currentInput === '0' ? String(num) : this.currentInput + String(num);
+        }
+        this.updateDisplay();
     }
-  }
-
-  function resetCalculator() {
-    calcDisplay = '0';
-    calcOperation = '';
-    firstOperand = null;
-    waitingForSecondOperand = false;
-    operator = null;
-  }
-
-  // Обработчики кнопок калькулятора
-  $('.calculator-btn[data-number]').click(function() {
-    inputDigit($(this).data('number'));
-    updateCalcDisplay();
-  });
-
-  $('#calcDecimal').click(function() {
-    inputDecimal();
-    updateCalcDisplay();
-  });
-
-  $('.calculator-btn[data-operator]').click(function() {
-    handleOperator($(this).data('operator'));
-    updateCalcDisplay();
-  });
-
-  $('#calcEquals').click(function() {
-    if (operator && !waitingForSecondOperand) {
-      const result = performCalculation();
-      calcDisplay = `${parseFloat(result.toFixed(7))}`;
-      calcOperation = `${firstOperand} ${operator} ${parseFloat(calcDisplay)} =`;
-      waitingForSecondOperand = true;
-      operator = null;
-      updateCalcDisplay();
+    
+    inputDecimal() {
+        if (this.waitingForNewInput) {
+            this.currentInput = '0.';
+            this.waitingForNewInput = false;
+        } else if (this.currentInput.indexOf('.') === -1) {
+            this.currentInput += '.';
+        }
+        this.updateDisplay();
     }
-  });
-
-  $('#calcClear').click(function() {
-    resetCalculator();
-    updateCalcDisplay();
-  });
-
-  $('#calcDelete').click(function() {
-    if (calcDisplay.length > 1) {
-      calcDisplay = calcDisplay.slice(0, -1);
-    } else {
-      calcDisplay = '0';
+    
+    handleOperator(nextOperator) {
+        const inputValue = parseFloat(this.currentInput);
+        
+        if (this.previousInput === '' && !isNaN(inputValue)) {
+            this.previousInput = this.currentInput;
+            this.operator = nextOperator;
+            this.waitingForNewInput = true;
+        } else if (this.operator) {
+            this.calculate();
+            this.operator = nextOperator;
+            this.waitingForNewInput = true;
+        }
+        
+        this.updateDisplay();
     }
-    calcOperation = calcDisplay;
-    updateCalcDisplay();
-  });
+    
+    calculate() {
+        if (this.operator === null || this.waitingForNewInput) return;
+        
+        const prevValue = parseFloat(this.previousInput);
+        const currentValue = parseFloat(this.currentInput);
+        let result;
+        
+        switch (this.operator) {
+            case '+':
+                result = prevValue + currentValue;
+                break;
+            case '-':
+                result = prevValue - currentValue;
+                break;
+            case '*':
+                result = prevValue * currentValue;
+                break;
+            case '/':
+                result = currentValue !== 0 ? prevValue / currentValue : 0;
+                break;
+            case '%':
+                result = prevValue % currentValue;
+                break;
+            default:
+                return;
+        }
+        
+        this.currentInput = String(result);
+        this.previousInput = '';
+        this.operator = null;
+        this.waitingForNewInput = true;
+        this.updateDisplay();
+    }
+    
+    clear() {
+        this.currentInput = '0';
+        this.previousInput = '';
+        this.operator = null;
+        this.waitingForNewInput = false;
+        this.updateDisplay();
+    }
+    
+    deleteLast() {
+        if (this.currentInput.length > 1) {
+            this.currentInput = this.currentInput.slice(0, -1);
+        } else {
+            this.currentInput = '0';
+        }
+        this.updateDisplay();
+    }
+    
+    updateDisplay() {
+        this.displayElement.text(this.currentInput);
+        
+        if (this.previousInput !== '' && this.operator) {
+            this.operationElement.text(`${this.previousInput} ${this.getOperatorSymbol(this.operator)}`);
+        } else {
+            this.operationElement.text('');
+        }
+    }
+    
+    getOperatorSymbol(op) {
+        const symbols = {
+            '+': '+',
+            '-': '-',
+            '*': '×',
+            '/': '÷',
+            '%': '%'
+        };
+        return symbols[op] || op;
+    }
+}
 
-  // Инициализация дисплея
-  updateCalcDisplay();
+// Инициализация калькулятора
+$(document).ready(function() {
+    let calculator = null;
+    
+    // Инициализируем калькулятор когда открывается модальное окно
+    $('#calculatorModal').on('shown.bs.modal', function() {
+        calculator = new Calculator();
+    });
+    
+    // Очищаем калькулятор при закрытии модального окна
+    $('#calculatorModal').on('hidden.bs.modal', function() {
+        if (calculator) {
+            calculator.clear();
+        }
+    });
 });
 
 // Инициализация модальных окон
 $(document).ready(function() {
-  // Выбор размера холста
+  // Выбор размера холста - ИСПРАВЛЕННАЯ ВЕРСИЯ
   $('.size-btn').click(function() {
     $('.size-btn').removeClass('active');
     $(this).addClass('active');
+    
+    // Показываем/скрываем поля для пользовательского размера
+    if ($(this).data('size') === 'custom') {
+      $('#newCanvasWidth').closest('.form-group').show();
+      $('#newCanvasHeight').closest('.form-group').show();
+    } else {
+      $('#newCanvasWidth').closest('.form-group').hide();
+      $('#newCanvasHeight').closest('.form-group').hide();
+    }
+  });
+
+  // При открытии модального окна скрываем поля пользовательского размера
+  $('#newCanvasModal').on('show.bs.modal', function() {
+    $('#newCanvasWidth').closest('.form-group').hide();
+    $('#newCanvasHeight').closest('.form-group').hide();
   });
 
   // Автофокус на поле имени холста
