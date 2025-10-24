@@ -413,34 +413,22 @@
           </button>
         </div>
         <div class="modal-body">
-          <label><strong>Выберите Размер:</strong></label>
-       <div class="canvas-size-controls">
-  <div class="size-btn active" data-size="standard">
-    <div class="size-icon"><i class="fas fa-square"></i></div>
-    <div class="size-label">Стандартный</div>
-    <div class="size-dimensions">800×500</div>
+          <div class="form-group">
+            <label for="customWidth"><strong>Ширина:</strong></label>
+            <input type="number" class="form-control" id="customWidth" value="800" min="100" max="2000">
+          </div>
+          <div class="form-group">
+            <label for="customHeight"><strong>Высота:</strong></label>
+            <input type="number" class="form-control" id="customHeight" value="500" min="100" max="2000">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-primary" id="applyCustomSizeBtn">Применить</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="size-btn" data-size="wide">
-    <div class="size-icon"><i class="fas fa-arrows-alt-h"></i></div>
-    <div class="size-label">Широкий</div>
-    <div class="size-dimensions">1200×500</div>
-  </div>
-  <div class="size-btn" data-size="long">
-    <div class="size-icon"><i class="fas fa-arrows-alt-v"></i></div>
-    <div class="size-label">Длинный</div>
-    <div class="size-dimensions">800×800</div>
-  </div>
-  <div class="size-btn" data-size="large">
-    <div class="size-icon"><i class="fas fa-expand"></i></div>
-    <div class="size-label">Большой</div>
-    <div class="size-dimensions">1200×800</div>
-  </div>
-  <div class="size-btn" data-size="custom">
-    <div class="size-icon"><i class="fas fa-edit"></i></div>
-    <div class="size-label">Свой размер</div>
-    <div class="size-dimensions">Укажите ниже</div>
-  </div>
-</div>
 
   <!-- Calculator Modal -->
   <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog">
