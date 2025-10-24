@@ -38,9 +38,14 @@ $(document).ready(function() {
   
   // Создаем начальный холст
   createNewCanvas('Основной Холст', 800, 500);
+  
+  // Инициализируем улучшенную кисть
+  setTimeout(() => {
+    initializeAdvancedBrush();
+  }, 100);
 });
 
-// Инициализация Canvas
+// Инициализация Canvas - ИСПРАВЛЕННАЯ ВЕРСИЯ
 function initializeCanvas() {
   canvas = new fabric.Canvas('whiteboard', {
     isDrawingMode: true,
@@ -49,8 +54,16 @@ function initializeCanvas() {
     backgroundColor: 'rgba(255, 255, 255, 1)'
   });
 
+  // ПРАВИЛЬНАЯ НАСТРОЙКА КИСТИ
+  canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
   canvas.freeDrawingBrush.width = brushWidth;
   canvas.freeDrawingBrush.color = currentColor;
+  canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+    blur: 0,
+    offsetX: 0,
+    offsetY: 0,
+    affectStroke: true
+  });
 
   // Обработчики событий canvas
   canvas.on('path:created', function() {
@@ -67,6 +80,19 @@ function initializeCanvas() {
     selectedObject = null;
     updateStatus('Готов к рисованию');
   });
+}
+
+// Улучшенная инициализация кисти - НОВАЯ ФУНКЦИЯ
+function initializeAdvancedBrush() {
+  if (canvas.isDrawingMode) {
+    // Создаем кастомную кисть с правильными настройками
+    canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+    canvas.freeDrawingBrush.decimate = 1; // Минимизируем децимацию
+    canvas.freeDrawingBrush.strokeLineCap = 'round'; // Круглые концы
+    canvas.freeDrawingBrush.strokeLineJoin = 'round'; // Круглые соединения
+    
+    updateBrush();
+  }
 }
 
 // Инициализация обработчиков событий
@@ -87,12 +113,13 @@ function initializeEventListeners() {
     updateBrush();
   });
 
-  // Толщина кисти
+  // Толщина кисти - ИСПРАВЛЕННАЯ ВЕРСИЯ
   $('#brushWidth').on('input', function() {
-    brushWidth = $(this).val();
+    brushWidth = parseInt($(this).val());
     $('#brush-width-value').text(brushWidth);
     updateBrushPreview();
     updateBrush();
+    initializeAdvancedBrush(); // Переинициализируем кисть при изменении толщины
   });
 
   // Очистка холста
@@ -150,6 +177,11 @@ function initializeEventListeners() {
       '<i class="fas fa-pencil-alt"></i> Рисование Включено' : 
       '<i class="fas fa-ban"></i> Рисование Выключено');
     updateStatus(canvas.isDrawingMode ? 'Режим рисования' : 'Режим просмотра');
+    
+    // Переинициализируем кисть при включении рисования
+    if (canvas.isDrawingMode) {
+      initializeAdvancedBrush();
+    }
   });
 
   // Слои
@@ -259,6 +291,11 @@ function updateDrawingMode() {
   $('#text-controls-section').toggle(currentMode === 'text');
   
   updateStatus(`Режим: ${getModeName(currentMode)}`);
+  
+  // Переинициализируем кисть при переключении режимов
+  if (canvas.isDrawingMode) {
+    initializeAdvancedBrush();
+  }
 }
 
 // Получение читаемого имени режима
@@ -274,11 +311,19 @@ function getModeName(mode) {
   return names[mode] || mode;
 }
 
-// Обновление кисти
+// Обновление кисти - ИСПРАВЛЕННАЯ ВЕРСИЯ
 function updateBrush() {
   if (canvas.isDrawingMode) {
-    canvas.freeDrawingBrush.width = brushWidth;
+    canvas.freeDrawingBrush.width = parseInt(brushWidth);
     canvas.freeDrawingBrush.color = isRainbowMode ? getRainbowColor() : currentColor;
+    
+    // Дополнительные настройки для устранения смещения
+    canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+      blur: 0,
+      offsetX: 0,
+      offsetY: 0,
+      affectStroke: true
+    });
   }
   updateBrushPreview();
 }
@@ -286,10 +331,12 @@ function updateBrush() {
 // Обновление превью кисти
 function updateBrushPreview() {
   const preview = $('#brush-preview');
+  const previewSize = Math.max(40, brushWidth * 3); // Минимальный размер 40px
   preview.css({
-    'width': `${brushWidth * 4}px`,
-    'height': `${brushWidth * 4}px`,
-    'background': isRainbowMode ? 'linear-gradient(45deg, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #9900ff)' : currentColor
+    'width': `${previewSize}px`,
+    'height': `${previewSize}px`,
+    'background': isRainbowMode ? 'linear-gradient(45deg, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #9900ff)' : currentColor,
+    'font-size': brushWidth > 15 ? '12px' : '14px'
   });
   preview.text(brushWidth);
 }
@@ -566,6 +613,11 @@ function switchCanvas(canvasId) {
   currentCanvas = canvasId;
   saveState();
   updateStatus(`Активный холст: ${canvasData.name}`);
+  
+  // Переинициализируем кисть при переключении холстов
+  if (canvas.isDrawingMode) {
+    initializeAdvancedBrush();
+  }
 }
 
 // Закрытие холста
@@ -840,7 +892,7 @@ function loadSettings() {
   }
 }
 
-// Калькулятор - ИСПРАВЛЕННАЯ РАБОЧАЯ ВЕРСИЯ
+// Калькулятор - РАБОЧАЯ ВЕРСИЯ
 class Calculator {
     constructor() {
         this.currentInput = '0';
@@ -1015,7 +1067,7 @@ $(document).ready(function() {
 
 // Инициализация модальных окон
 $(document).ready(function() {
-  // Выбор размера холста - ИСПРАВЛЕННАЯ ВЕРСИЯ
+  // Выбор размера холста
   $('.size-btn').click(function() {
     $('.size-btn').removeClass('active');
     $(this).addClass('active');
