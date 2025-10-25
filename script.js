@@ -892,13 +892,13 @@ function loadSettings() {
   }
 }
 
-// Калькулятор - РАБОЧАЯ ВЕРСИЯ
+// Калькулятор - УЛУЧШЕННАЯ ВЕРСИЯ С ПОДДЕРЖКОЙ МНОГОЧЛЕНОВ
 class Calculator {
     constructor() {
         this.currentInput = '0';
-        this.previousInput = '';
-        this.operator = null;
-        this.waitingForNewInput = false;
+        this.expression = '';
+        this.lastResult = null;
+        this.isNewCalculation = true;
         
         this.displayElement = $('#calcDisplay');
         this.operationElement = $('#calcOperation');
@@ -940,19 +940,19 @@ class Calculator {
     }
     
     inputNumber(num) {
-        if (this.waitingForNewInput) {
+        if (this.isNewCalculation || this.currentInput === '0') {
             this.currentInput = String(num);
-            this.waitingForNewInput = false;
+            this.isNewCalculation = false;
         } else {
-            this.currentInput = this.currentInput === '0' ? String(num) : this.currentInput + String(num);
+            this.currentInput += String(num);
         }
         this.updateDisplay();
     }
     
     inputDecimal() {
-        if (this.waitingForNewInput) {
+        if (this.isNewCalculation) {
             this.currentInput = '0.';
-            this.waitingForNewInput = false;
+            this.isNewCalculation = false;
         } else if (this.currentInput.indexOf('.') === -1) {
             this.currentInput += '.';
         }
@@ -960,60 +960,154 @@ class Calculator {
     }
     
     handleOperator(nextOperator) {
-        const inputValue = parseFloat(this.currentInput);
-        
-        if (this.previousInput === '' && !isNaN(inputValue)) {
-            this.previousInput = this.currentInput;
-            this.operator = nextOperator;
-            this.waitingForNewInput = true;
-        } else if (this.operator) {
-            this.calculate();
-            this.operator = nextOperator;
-            this.waitingForNewInput = true;
+        if (this.isNewCalculation && this.lastResult !== null) {
+            // Продолжаем вычисления с предыдущим результатом
+            this.expression = this.lastResult + ' ' + nextOperator + ' ';
+            this.currentInput = '0';
+        } else {
+            // Добавляем текущее число и оператор к выражению
+            if (this.expression === '') {
+                this.expression = this.currentInput + ' ' + nextOperator + ' ';
+            } else {
+                // Если выражение уже есть, вычисляем промежуточный результат
+                const tempExpression = this.expression + this.currentInput;
+                const tempResult = this.evaluateExpression(tempExpression);
+                this.expression = tempResult + ' ' + nextOperator + ' ';
+            }
+            this.currentInput = '0';
         }
         
+        this.isNewCalculation = false;
         this.updateDisplay();
     }
     
     calculate() {
-        if (this.operator === null || this.waitingForNewInput) return;
-        
-        const prevValue = parseFloat(this.previousInput);
-        const currentValue = parseFloat(this.currentInput);
-        let result;
-        
-        switch (this.operator) {
-            case '+':
-                result = prevValue + currentValue;
-                break;
-            case '-':
-                result = prevValue - currentValue;
-                break;
-            case '*':
-                result = prevValue * currentValue;
-                break;
-            case '/':
-                result = currentValue !== 0 ? prevValue / currentValue : 0;
-                break;
-            case '%':
-                result = prevValue % currentValue;
-                break;
-            default:
-                return;
+        if (this.expression === '') {
+            // Если нет выражения, просто показываем текущее число
+            this.lastResult = parseFloat(this.currentInput);
+            this.expression = this.currentInput + ' =';
+        } else {
+            // Вычисляем полное выражение
+            const fullExpression = this.expression + this.currentInput;
+            this.lastResult = this.evaluateExpression(fullExpression);
+            this.expression = fullExpression + ' =';
+            this.currentInput = String(this.lastResult);
         }
         
-        this.currentInput = String(result);
-        this.previousInput = '';
-        this.operator = null;
-        this.waitingForNewInput = true;
+        this.isNewCalculation = true;
         this.updateDisplay();
+    }
+    
+    evaluateExpression(expr) {
+        try {
+            // Заменяем математические символы на JS-совместимые
+            expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+            
+            // Разбиваем выражение на токены
+            const tokens = this.tokenizeExpression(expr);
+            
+            // Вычисляем выражение с учетом приоритета операций
+            let result = this.parseExpression(tokens);
+            
+            // Округляем до 10 знаков после запятой чтобы избежать ошибок округления
+            result = Math.round(result * 10000000000) / 10000000000;
+            
+            return result;
+        } catch (error) {
+            console.error('Ошибка вычисления:', error);
+            return 0;
+        }
+    }
+    
+    tokenizeExpression(expr) {
+        // Разбиваем выражение на числа и операторы
+        const tokenRegex = /(\d+\.?\d*)|([+\-*/%])/g;
+        const tokens = [];
+        let match;
+        
+        while ((match = tokenRegex.exec(expr)) !== null) {
+            if (match[1]) { // Число
+                tokens.push({ type: 'number', value: parseFloat(match[1]) });
+            } else if (match[2]) { // Оператор
+                tokens.push({ type: 'operator', value: match[2] });
+            }
+        }
+        
+        return tokens;
+    }
+    
+    parseExpression(tokens) {
+        // Преобразуем инфиксную нотацию в постфиксную (обратная польская нотация)
+        const output = [];
+        const operators = [];
+        
+        const precedence = {
+            '+': 1,
+            '-': 1,
+            '*': 2,
+            '/': 2,
+            '%': 2
+        };
+        
+        for (let token of tokens) {
+            if (token.type === 'number') {
+                output.push(token.value);
+            } else if (token.type === 'operator') {
+                while (operators.length > 0 && 
+                       precedence[operators[operators.length - 1]] >= precedence[token.value]) {
+                    output.push(operators.pop());
+                }
+                operators.push(token.value);
+            }
+        }
+        
+        while (operators.length > 0) {
+            output.push(operators.pop());
+        }
+        
+        // Вычисляем выражение в постфиксной нотации
+        return this.evaluatePostfix(output);
+    }
+    
+    evaluatePostfix(postfix) {
+        const stack = [];
+        
+        for (let item of postfix) {
+            if (typeof item === 'number') {
+                stack.push(item);
+            } else {
+                const b = stack.pop();
+                const a = stack.pop();
+                
+                switch (item) {
+                    case '+':
+                        stack.push(a + b);
+                        break;
+                    case '-':
+                        stack.push(a - b);
+                        break;
+                    case '*':
+                        stack.push(a * b);
+                        break;
+                    case '/':
+                        if (b === 0) throw new Error('Деление на ноль');
+                        stack.push(a / b);
+                        break;
+                    case '%':
+                        stack.push(a % b);
+                        break;
+                }
+            }
+        }
+        
+        return stack[0];
     }
     
     clear() {
         this.currentInput = '0';
-        this.previousInput = '';
-        this.operator = null;
-        this.waitingForNewInput = false;
+        this.expression = '';
+        this.lastResult = null;
+        this.isNewCalculation = true;
         this.updateDisplay();
     }
     
@@ -1022,29 +1116,14 @@ class Calculator {
             this.currentInput = this.currentInput.slice(0, -1);
         } else {
             this.currentInput = '0';
+            this.isNewCalculation = true;
         }
         this.updateDisplay();
     }
     
     updateDisplay() {
         this.displayElement.text(this.currentInput);
-        
-        if (this.previousInput !== '' && this.operator) {
-            this.operationElement.text(`${this.previousInput} ${this.getOperatorSymbol(this.operator)}`);
-        } else {
-            this.operationElement.text('');
-        }
-    }
-    
-    getOperatorSymbol(op) {
-        const symbols = {
-            '+': '+',
-            '-': '-',
-            '*': '×',
-            '/': '÷',
-            '%': '%'
-        };
-        return symbols[op] || op;
+        this.operationElement.text(this.expression);
     }
 }
 
