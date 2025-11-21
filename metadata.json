@@ -1,5 +1,0 @@
-{
-  "name": "AI Travel Planner",
-  "description": "An AI-powered travel planner that generates personalized itineraries using the Gemini API. Users can input their destination, trip duration, interests, and budget to receive a detailed day-by-day travel plan.",
-  "requestFramePermissions": []
-}
