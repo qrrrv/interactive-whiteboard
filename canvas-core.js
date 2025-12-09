@@ -125,12 +125,12 @@ function updateDrawingMode() {
   canvasWrapper.removeClass(\'cursor-pencil cursor-eraser\');
   if (currentMode === \'pencil\') {
     canvasWrapper.addClass(\'cursor-pencil\');
-    // Карандаш с текстурой
-    canvas.defaultCursor = \'url("data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"32\\" height=\\"32\\" viewBox=\\"0 0 32 32\\"><path fill=\\"#000\\" d=\\"M27.71 4.29a1 1 0 0 0-1.42 0l-16 16a1 1 0 0 0 0 1.42l4 4a1 1 0 0 0 1.42 0l16-16a1 1 0 0 0 0-1.42zM12 24.59l-2.59-2.59 13.5-13.5 2.59 2.59z\\"/><path fill=\\"#fff\\" d=\\"M10.5 22.5l-2 2 3 3 2-2z\\"/><path fill=\\"#000\\" d=\\"M10.5 22.5l-2 2 3 3 2-2z\\" opacity=\\".5\\"/></svg>") 0 32, auto\';
+    // Карандаш с изображением
+    canvas.defaultCursor = \'url("assets/cursors/pencil.png") 0 32, auto\';
   } else if (currentMode === \'eraser\') {
     canvasWrapper.addClass(\'cursor-eraser\');
-    // Ластик с текстурой (круг)
-    canvas.defaultCursor = \'url("data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"32\\" height=\\"32\\" viewBox=\\"0 0 32 32\\"><circle cx=\\"16\\" cy=\\"16\\" r=\\"14\\" fill=\\"#fff\\" stroke=\\"#000\\" stroke-width=\\"2\\"/><path fill=\\"#000\\" d=\\"M16 4a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm0 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20z\\"/></svg>") 16 16, auto\';
+    // Ластик с изображением
+    canvas.defaultCursor = \'url("assets/cursors/eraser.png") 16 16, auto\';
   } else {
     canvas.defaultCursor = \'default\';
   }
