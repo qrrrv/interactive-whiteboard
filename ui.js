@@ -1,5 +1,13 @@
 // ui.js - Интерфейс и обработчики событий
 
+// Добавляем функцию toggleSnowflakes в глобальную область видимости, чтобы ui.js мог ее использовать
+// Предполагается, что snowflakes.js загружается перед ui.js
+// В реальном проекте использовался бы import/export, но здесь делаем через глобальную область
+// для совместимости с текущей структурой.
+// ВАЖНО: В реальном проекте нужно убедиться, что snowflakes.js загружен.
+// В данном случае, мы просто предполагаем, что он доступен.
+// Если snowflakes.js не использует export, то функция toggleSnowflakes уже глобальна.
+
 let isGridVisible = false;
 let isRulerVisible = false;
 let isMinimapVisible = false;
@@ -38,6 +46,29 @@ function initializeSidebar() {
   // Загрузка сохраненной темы
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) $(`.theme-option[data-theme="${savedTheme}"]`).click();
+
+  // Инициализация снежинок
+  let isSnowflakesOn = localStorage.getItem('snowflakes');
+  if (isSnowflakesOn === null) {
+    // Включаем по умолчанию, если тема зимняя
+    isSnowflakesOn = savedTheme === 'winter' ? 'true' : 'false';
+    localStorage.setItem('snowflakes', isSnowflakesOn);
+  }
+  isSnowflakesOn = isSnowflakesOn === 'true';
+  
+  $('#snowflakesToggle').prop('checked', isSnowflakesOn);
+  if (typeof toggleSnowflakes === 'function') {
+    toggleSnowflakes(isSnowflakesOn);
+  }
+
+  // Обработчик переключателя снежинок
+  $('#snowflakesToggle').change(function() {
+    const isActive = $(this).is(':checked');
+    localStorage.setItem('snowflakes', isActive);
+    if (typeof toggleSnowflakes === 'function') {
+      toggleSnowflakes(isActive);
+    }
+  });
 }
 
 function initializeFloatingToolbar() {

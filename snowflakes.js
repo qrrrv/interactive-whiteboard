@@ -1,6 +1,24 @@
 // snowflakes.js - Анимация снежинок
 
+let isSnowflakesActive = false;
+let snowflakeElements = [];
+
+function clearSnowflakes() {
+  snowflakeElements.forEach(el => el.remove());
+  snowflakeElements = [];
+}
+
+function toggleSnowflakes(shouldBeActive) {
+  isSnowflakesActive = shouldBeActive;
+  if (isSnowflakesActive) {
+    createSnowflakes();
+  } else {
+    clearSnowflakes();
+  }
+}
+
 function createSnowflakes() {
+  if (!isSnowflakesActive) return;
   const snowflakeCount = 50;
   const snowflakeSymbols = ['❄', '❅', '❆'];
   
@@ -20,12 +38,11 @@ function createSnowflakes() {
     snowflake.style.animationDuration = duration + 's';
     
     document.body.appendChild(snowflake);
+    snowflakeElements.push(snowflake);
   }
 }
 
-// Инициализация снежинок при загрузке страницы
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', createSnowflakes);
-} else {
-  createSnowflakes();
-}
+// Экспорт функции для использования в ui.js
+// Снежинки будут инициализированы через ui.js, если тема "winter" активна по умолчанию
+// или через переключатель в настройках.
+// export { toggleSnowflakes };

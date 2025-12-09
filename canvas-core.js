@@ -113,10 +113,26 @@ function updateUndoRedoButtons() {
 
 // Обновление режима рисования
 function updateDrawingMode() {
-  const drawModes = ['pencil', 'eraser'];
+  const drawModes = [\'pencil\', \'eraser\'];
   canvas.isDrawingMode = drawModes.includes(currentMode);
   
-  if (canvas.isDrawingMode) updateBrush();
+  if (canvas.isDrawingMode) {
+    updateBrush();
+  }
+
+  // Обновление курсора
+  const canvasWrapper = $(\'#canvasWrapper\');
+  canvasWrapper.removeClass(\'cursor-pencil cursor-eraser\');
+  if (currentMode === \'pencil\') {
+    canvasWrapper.addClass(\'cursor-pencil\');
+    canvas.defaultCursor = \'url("data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z\"></path></svg>") 0 24, auto\';
+  } else if (currentMode === \'eraser\') {
+    canvasWrapper.addClass(\'cursor-eraser\');
+    canvas.defaultCursor = \'url("data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><line x1=\"4.93\" y1=\"4.93\" x2=\"19.07\" y2=\"19.07\"></line></svg>") 12 12, auto\';
+  } else {
+    canvas.defaultCursor = \'default\';
+  }
+
   updateStatus(`Режим: ${getModeName(currentMode)}`);
 }
 
@@ -160,7 +176,7 @@ function switchCanvas(id) {
   
   currentCanvas = id;
   saveState();
-  if (canvas.isDrawingMode) updateBrush();
+  updateDrawingMode();
 }
 
 function closeCanvas(id) {

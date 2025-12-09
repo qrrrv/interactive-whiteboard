@@ -188,9 +188,10 @@ h1 i { color: var(--primary); }
   background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
   border-radius: 12px; padding: 8px 12px;
   display: flex; align-items: center; gap: 6px;
+  flex-wrap: nowrap;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 50;
   max-width: 95vw;
-  overflow-x: auto;
+  overflow-x: scroll; /* Changed to scroll to force scrollbar visibility if content overflows */
   overflow-y: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(67,97,238,0.3) transparent;
@@ -749,6 +750,10 @@ body::before {
   position: relative;
   z-index: 1;
 }
+
+/* КУРСОРЫ ИНСТРУМЕНТОВ */
+.cursor-pencil { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>') 0 24, auto; }
+.cursor-eraser { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-slash"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>') 12 12, auto; }
 
 /* Уведомления совместной работы */
 .collab-notification {
