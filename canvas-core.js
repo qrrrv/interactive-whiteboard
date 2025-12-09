@@ -122,17 +122,20 @@ function updateDrawingMode() {
 
   // Обновление курсора
   const canvasWrapper = $(\'#canvasWrapper\');
-  canvasWrapper.removeClass(\'cursor-pencil cursor-eraser\');
+  canvasWrapper.removeClass(\'cursor-pencil cursor-eraser cursor-select\');
+  
   if (currentMode === \'pencil\') {
     canvasWrapper.addClass(\'cursor-pencil\');
-    // Карандаш с изображением
-    canvas.defaultCursor = \'url("assets/cursors/pencil.png") 0 32, auto\';
+    canvas.defaultCursor = \'crosshair\'; // Используем стандартный crosshair для рисования
   } else if (currentMode === \'eraser\') {
     canvasWrapper.addClass(\'cursor-eraser\');
-    // Ластик с изображением
-    canvas.defaultCursor = \'url("assets/cursors/eraser.png") 16 16, auto\';
+    canvas.defaultCursor = \'crosshair\'; // Используем стандартный crosshair для ластика
+  } else if (currentMode === \'select\') {
+    canvasWrapper.addClass(\'cursor-select\');
+    canvas.defaultCursor = \'default\'; // Стандартный курсор для выбора
   } else {
-    canvas.defaultCursor = \'default\';
+    // Для фигур и текста
+    canvas.defaultCursor = \'crosshair\';
   }
 
   updateStatus(`Режим: ${getModeName(currentMode)}`);

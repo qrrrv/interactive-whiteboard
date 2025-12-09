@@ -112,16 +112,85 @@
   <div class="container">
     <h1><i class="fas fa-draw-polygon"></i> Интерактивная Доска</h1>
     
-    <!-- Вкладки холстов -->
-    <div class="canvas-tabs" id="canvasTabs"></div>
+    <!-- Панель инструментов -->
+    <div class="main-toolbar">
+      <!-- Вкладки холстов -->
+      <div class="canvas-tabs" id="canvasTabs"></div>
 
-    <!-- Быстрые действия -->
-    <div class="tools-section">
+      <!-- Быстрые действия -->
+      <div class="tools-section">
       <div class="tool-btn-card" data-toggle="modal" data-target="#calculatorModal"><i class="fas fa-calculator"></i><span>Калькулятор</span></div>
       <div class="tool-btn-card" id="saveCanvasBtn"><i class="fas fa-save"></i><span>Сохранить</span></div>
       <div class="tool-btn-card" id="loadCanvasBtn"><i class="fas fa-folder-open"></i><span>Загрузить</span></div>
       <div class="tool-btn-card" id="newCanvasBtn"><i class="fas fa-plus"></i><span>Новый Холст</span></div>
       <div class="tool-btn-card" id="resizeCanvasBtn"><i class="fas fa-expand-arrows-alt"></i><span>Размер Холста</span></div>
+      </div>
+      
+      <!-- ПАНЕЛЬ ИНСТРУМЕНТОВ ДЛЯ РИСОВАНИЯ -->
+      <div class="drawing-toolbar" id="drawingToolbar">
+        <!-- Основные инструменты -->
+        <div class="toolbar-section">
+          <div class="tool-btn active" data-mode="pencil" title="Кисть"><i class="fas fa-paint-brush"></i></div>
+          <div class="tool-btn" data-mode="eraser" title="Ластик"><i class="fas fa-eraser"></i></div>
+          <div class="tool-btn" data-mode="select" title="Выбор"><i class="fas fa-mouse-pointer"></i></div>
+        </div>
+        
+        <div class="toolbar-divider"></div>
+        
+        <!-- Фигуры -->
+        <div class="toolbar-section">
+          <div class="tool-btn" data-mode="line" title="Линия"><i class="fas fa-minus"></i></div>
+          <div class="tool-btn" data-mode="rectangle" title="Прямоугольник"><i class="fas fa-square"></i></div>
+          <div class="tool-btn" data-mode="circle" title="Круг"><i class="fas fa-circle"></i></div>
+          <div class="tool-btn" data-mode="triangle" title="Треугольник"><i class="fas fa-play"></i></div>
+          <div class="tool-btn" data-mode="ellipse" title="Эллипс"><i class="far fa-circle"></i></div>
+          <div class="tool-btn" data-mode="star" title="Звезда"><i class="fas fa-star"></i></div>
+          <div class="tool-btn" data-mode="arrow" title="Стрелка"><i class="fas fa-arrow-right"></i></div>
+          <div class="tool-btn" data-mode="text" title="Текст"><i class="fas fa-font"></i></div>
+        </div>
+        
+        <div class="toolbar-divider"></div>
+        
+        <!-- Цвета -->
+        <div class="toolbar-section colors">
+          <div class="color-btn active" data-color="#000000" style="background:#000"></div>
+          <div class="color-btn" data-color="#ff0000" style="background:#ff0000"></div>
+          <div class="color-btn" data-color="#00aa00" style="background:#00aa00"></div>
+          <div class="color-btn" data-color="#0000ff" style="background:#0000ff"></div>
+          <div class="color-btn" data-color="#ffff00" style="background:#ffff00"></div>
+          <div class="color-btn" data-color="#ff00ff" style="background:#ff00ff"></div>
+          <div class="color-btn" data-color="#00ffff" style="background:#00ffff"></div>
+          <div class="color-btn" data-color="#ffffff" style="background:#fff;border:1px solid #ccc"></div>
+          <input type="color" id="colorPicker" value="#000000" title="Свой цвет">
+        </div>
+        
+        <div class="toolbar-divider"></div>
+        
+        <!-- Размер кисти -->
+        <div class="toolbar-section brush">
+          <input type="range" id="brushSize" min="1" max="30" value="5">
+          <span id="brushSizeValue">5</span>
+        </div>
+        
+        <div class="toolbar-divider"></div>
+        
+        <!-- Заливка -->
+        <div class="toolbar-section">
+          <div class="tool-btn" id="fillToggle" title="Заливка фигур"><i class="fas fa-fill-drip"></i></div>
+        </div>
+        
+        <div class="toolbar-divider"></div>
+        
+        <!-- Действия -->
+        <div class="toolbar-section">
+          <div class="tool-btn" id="undoBtn" title="Отменить"><i class="fas fa-undo"></i></div>
+          <div class="tool-btn" id="redoBtn" title="Вернуть"><i class="fas fa-redo"></i></div>
+          <div class="tool-btn" id="clearBtn" title="Очистить"><i class="fas fa-trash"></i></div>
+        </div>
+        
+        <!-- Свернуть -->
+        <div class="collapse-btn" id="collapseToolbar" title="Свернуть"><i class="fas fa-chevron-up"></i></div>
+      </div>
     </div>
 
     <!-- Контейнер холста -->
@@ -129,71 +198,7 @@
       <div class="canvas-wrapper" id="canvasWrapper">
         <canvas id="whiteboard"></canvas>
         
-        <!-- ПЛАВАЮЩАЯ ПАНЕЛЬ ИНСТРУМЕНТОВ -->
-        <div class="floating-toolbar" id="floatingToolbar">
-          <!-- Основные инструменты -->
-          <div class="toolbar-section">
-            <div class="tool-btn active" data-mode="pencil" title="Кисть"><i class="fas fa-paint-brush"></i></div>
-            <div class="tool-btn" data-mode="eraser" title="Ластик"><i class="fas fa-eraser"></i></div>
-            <div class="tool-btn" data-mode="select" title="Выбор"><i class="fas fa-mouse-pointer"></i></div>
-          </div>
-          
-          <div class="toolbar-divider"></div>
-          
-          <!-- Фигуры -->
-          <div class="toolbar-section">
-            <div class="tool-btn" data-mode="line" title="Линия"><i class="fas fa-minus"></i></div>
-            <div class="tool-btn" data-mode="rectangle" title="Прямоугольник"><i class="fas fa-square"></i></div>
-            <div class="tool-btn" data-mode="circle" title="Круг"><i class="fas fa-circle"></i></div>
-            <div class="tool-btn" data-mode="triangle" title="Треугольник"><i class="fas fa-play"></i></div>
-            <div class="tool-btn" data-mode="ellipse" title="Эллипс"><i class="far fa-circle"></i></div>
-            <div class="tool-btn" data-mode="star" title="Звезда"><i class="fas fa-star"></i></div>
-            <div class="tool-btn" data-mode="arrow" title="Стрелка"><i class="fas fa-arrow-right"></i></div>
-            <div class="tool-btn" data-mode="text" title="Текст"><i class="fas fa-font"></i></div>
-          </div>
-          
-          <div class="toolbar-divider"></div>
-          
-          <!-- Цвета -->
-          <div class="toolbar-section colors">
-            <div class="color-btn active" data-color="#000000" style="background:#000"></div>
-            <div class="color-btn" data-color="#ff0000" style="background:#ff0000"></div>
-            <div class="color-btn" data-color="#00aa00" style="background:#00aa00"></div>
-            <div class="color-btn" data-color="#0000ff" style="background:#0000ff"></div>
-            <div class="color-btn" data-color="#ffff00" style="background:#ffff00"></div>
-            <div class="color-btn" data-color="#ff00ff" style="background:#ff00ff"></div>
-            <div class="color-btn" data-color="#00ffff" style="background:#00ffff"></div>
-            <div class="color-btn" data-color="#ffffff" style="background:#fff;border:1px solid #ccc"></div>
-            <input type="color" id="colorPicker" value="#000000" title="Свой цвет">
-          </div>
-          
-          <div class="toolbar-divider"></div>
-          
-          <!-- Размер кисти -->
-          <div class="toolbar-section brush">
-            <input type="range" id="brushSize" min="1" max="30" value="5">
-            <span id="brushSizeValue">5</span>
-          </div>
-          
-          <div class="toolbar-divider"></div>
-          
-          <!-- Заливка -->
-          <div class="toolbar-section">
-            <div class="tool-btn" id="fillToggle" title="Заливка фигур"><i class="fas fa-fill-drip"></i></div>
-          </div>
-          
-          <div class="toolbar-divider"></div>
-          
-          <!-- Действия -->
-          <div class="toolbar-section">
-            <div class="tool-btn" id="undoBtn" title="Отменить"><i class="fas fa-undo"></i></div>
-            <div class="tool-btn" id="redoBtn" title="Вернуть"><i class="fas fa-redo"></i></div>
-            <div class="tool-btn" id="clearBtn" title="Очистить"><i class="fas fa-trash"></i></div>
-          </div>
-          
-          <!-- Свернуть -->
-          <div class="collapse-btn" id="collapseToolbar" title="Свернуть"><i class="fas fa-chevron-up"></i></div>
-        </div>
+
       </div>
     </div>
 

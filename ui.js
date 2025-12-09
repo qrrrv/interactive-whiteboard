@@ -15,7 +15,7 @@ let isLayersPanelOpen = false;
 
 function initializeUI() {
   initializeSidebar();
-  initializeFloatingToolbar();
+  initializeDrawingToolbar();
   initializeColorPicker();
   initializeCalculator();
   initializeModals();
@@ -71,18 +71,18 @@ function initializeSidebar() {
   });
 }
 
-function initializeFloatingToolbar() {
+function initializeDrawingToolbar() {
   // Инструменты
-  $('.floating-tool[data-mode]').click(function() {
-    $('.floating-tool[data-mode]').removeClass('active');
+  $('.tool-btn[data-mode]').click(function() {
+    $('.tool-btn[data-mode]').removeClass('active');
     $(this).addClass('active');
     currentMode = $(this).data('mode');
     updateDrawingMode();
   });
 
   // Цвета
-  $('.floating-color').click(function() {
-    $('.floating-color').removeClass('active');
+  $('.color-btn').click(function() {
+    $('.color-btn').removeClass('active');
     $(this).addClass('active');
     currentColor = $(this).data('color');
     if (currentMode !== 'eraser') updateBrush();
@@ -127,20 +127,18 @@ function initializeFloatingToolbar() {
     }
   });
 
-  // Сворачивание панели - ИСПРАВЛЕНО
-  $('#toolbarCollapse').click(function(e) {
+  // Сворачивание панели
+  $('#collapseToolbar').click(function(e) {
     e.stopPropagation();
-    $('#floatingToolbar').toggleClass('mini');
+    $('#drawingToolbar').toggleClass('collapsed');
     const icon = $(this).find('i');
-    if ($('#floatingToolbar').hasClass('mini')) {
+    if ($('#drawingToolbar').hasClass('collapsed')) {
       icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
     } else {
       icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
     }
   });
 
-  // Перетаскивание панели
-  makeToolbarDraggable();
 }
 
 // Дополнительные функции
