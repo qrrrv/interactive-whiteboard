@@ -1,46 +1,21 @@
-// firebase-config.js
-// Конфигурация Firebase для совместной работы
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// ИНСТРУКЦИЯ ПО НАСТРОЙКЕ:
-// 1. Перейдите на https://console.firebase.google.com/
-// 2. Создайте новый проект или используйте существующий
-// 3. В настройках проекта найдите "Ваши приложения" -> "Веб-приложение"
-// 4. Скопируйте конфигурацию и вставьте ниже
-// 5. В разделе "Realtime Database" создайте базу данных
-// 6. В правилах безопасности установите:
-/*
-{
-  "rules": {
-    "rooms": {
-      ".read": true,
-      ".write": true
-    },
-    "users": {
-      ".read": true,
-      ".write": true
-    }
-  }
-}
-*/
-
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB5oGZkVIRzgPusjdLhWoskj2DF0ii9nEU",
+  authDomain: "doska-36ab5.firebaseapp.com",
+  projectId: "doska-36ab5",
+  storageBucket: "doska-36ab5.firebasestorage.app",
+  messagingSenderId: "558238185780",
+  appId: "1:558238185780:web:5ad7f5403fae38e189cd61",
+  measurementId: "G-3YFY2LX17P"
 };
 
-// Проверка конфигурации
-function isFirebaseConfigured() {
-  return firebaseConfig.apiKey !== "YOUR_API_KEY" && 
-         firebaseConfig.projectId !== "YOUR_PROJECT_ID";
-}
-
-// Экспорт
-if (typeof window !== 'undefined') {
-  window.firebaseConfig = firebaseConfig;
-  window.isFirebaseConfigured = isFirebaseConfigured;
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
